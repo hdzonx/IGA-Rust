@@ -1,4 +1,5 @@
 pub mod matrix;
+pub mod vector;
 
 
 fn main() {
@@ -17,7 +18,10 @@ fn main() {
 
     let matrix_identity = matrix::Matrix::identity(6);
 
+    let vector_a = vector::Vector::zeros(3);
+
     println!("{:?}", matrix_c);
     println!("{:?}", matrix_identity);
     println!(" value is {}", value_in_pos);
+    println!("vector is {:?}", vector_a);
 }
