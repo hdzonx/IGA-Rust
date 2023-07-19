@@ -18,7 +18,10 @@ fn main() {
 
     let matrix_identity = matrix::Matrix::identity(6);
 
-    let vector_a = vector::Vector::zeros(3);
+    let mut vector_a = vector::Vector::zeros(3);
+    vector_a.set_value(0, 2.0);
+    vector_a.set_value(1, 3.0);
+    vector_a.set_value(2, 5.0);
 
     println!("{:?}", matrix_c);
     println!("{:?}", matrix_identity);
