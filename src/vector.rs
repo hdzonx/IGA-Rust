@@ -65,6 +65,6 @@ impl Vector {
                 new_vector.value[i] += self.value[i]*other.value[i][j];
             }
         }
-        new_vector
+        new_vector 
     }
 }
