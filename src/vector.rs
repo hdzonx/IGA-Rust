@@ -1,4 +1,3 @@
-use crate::matrix::Matrix;
 use std::fmt::{Debug, Formatter, Result};
 #[derive(Debug)]
 pub struct Vector {
@@ -55,16 +54,5 @@ impl Vector {
         dot_value
     }
 
-    pub fn mult_matrix_by_vector(&self, other: &Matrix) ->Vector {
-        if self.rows != other.cols {
-            panic!("Invalid multiplication due to mismatched dimensions.")
-        }
-        let mut new_vector: Vector = Vector::zeros(other.rows);
-        for i in 0..self.rows {
-            for j in 0..other.cols {
-                new_vector.value[i] += self.value[i]*other.value[i][j];
-            }
-        }
-        new_vector 
-    }
+
 }
