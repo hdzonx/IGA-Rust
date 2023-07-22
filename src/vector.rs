@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Formatter, Result};
+use std::fmt::Debug;
 #[derive(Debug)]
 pub struct Vector {
     pub rows: usize,

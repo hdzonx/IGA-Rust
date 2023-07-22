@@ -22,10 +22,4 @@ impl LinAlgebra {
     }
 
 
-    pub fn crout_method(matrix: &Matrix, vector: &Vector){
-        let mut crout_vec: Vector = Vector::zeros(matrix.rows);
-        let mut crout_mat:Matrix = Matrix::zeros(matrix.rows, matrix.cols);
-        let permut_vec:Vector = Vector::zeros(vector.rows);
-
-    }
 }
