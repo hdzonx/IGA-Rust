@@ -59,7 +59,7 @@ impl LinAlgebra {
             }
 
             if z != i {
-
+                let mut t:usize = 0;
 
 
 
