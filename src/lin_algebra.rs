@@ -23,6 +23,8 @@ impl LinAlgebra {
         let permut_vec: Vector = Vector::zeros(vector.rows);
     }
 
+    // The LU Decomposition always work correctly when the matrices is 
+    // symetric positive-definite.
     fn lu_decompostion(matrix: &Matrix) {
         if matrix.rows != matrix.cols {
             panic!("matrix for LU  decomposition must be square")
