@@ -59,11 +59,11 @@ impl LinAlgebra {
             }
 
             if z != i {
-                let mut t:usize = 0;
-
-
-
-
+                let mut t: f64 = 0.0;
+                for k in 0..n {
+                    t = lu_matrix.get_value(i, k);
+                    lu_matrix.set_value(i, k, lu_matrix.get_value(z, k));
+                }
             }
         }
     }
