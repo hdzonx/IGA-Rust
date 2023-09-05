@@ -77,7 +77,7 @@ fn back_substitution(u_matrix: &Vec<Vec<f64>>, c_vector: &Vec<f64>) -> Vec<f64> 
         }
         x_vector[i] = (c_vector[i] - sum) / u_matrix[i][i];
     }
-    println!(" y_vector in back substitution");
+    println!(" x_vector in back substitution");
     for row in &x_vector {
         println!("{:?}", row);
     }
@@ -90,28 +90,24 @@ fn main() {
     //let mut matrix_b = matrix::Matrix::zeros(2,3);
 
     matrix_a.set_value(0, 0, 2.0);
-    matrix_a.set_value(0, 1, 6.0);
-    matrix_a.set_value(0, 2, 2.0);
-    matrix_a.set_value(1, 0, -3.0);
-    matrix_a.set_value(1, 1, -8.0);
-    matrix_a.set_value(1, 2, 0.0);
+    matrix_a.set_value(0, 1, -3.0);
+    matrix_a.set_value(0, 2, 1.0);
+    matrix_a.set_value(1, 0, 1.0);
+    matrix_a.set_value(1, 1, 2.0);
+    matrix_a.set_value(1, 2, -3.0);
     matrix_a.set_value(2, 0, 4.0);
-    matrix_a.set_value(2, 1, 9.0);
-    matrix_a.set_value(2, 2, 2.0);
-   // let matrix_c = matrix_a.add_matrices(&matrix_b);
+    matrix_a.set_value(2, 1, -1.0);
+    matrix_a.set_value(2, 2, -2.0);
 
-    //let matrx_d = matrix_c.transpose();
-
-    //let value_in_pos = matrix_c.get_value(0, 1);
-
-    //let matrix_identity = matrix::Matrix::identity(6);
 
     let mut vector_a = vector::Vector::zeros(3);
-    vector_a.set_value(0, 2.0);
-    vector_a.set_value(1, 3.0);
-    vector_a.set_value(2, 5.0);
+    vector_a.set_value(0, 1.0);
+    vector_a.set_value(1, 4.0);
+    vector_a.set_value(2, 8.0);
 
-   // let vector_b = lin_algebra::LinAlgebra::mult_matrix_by_vector(&matrix_c , &vector_a);
+
+
+   let vector_b = lin_algebra::LinAlgebra::crout_method_solve(&matrix_a, &vector_a);
 
    // println!("{:?}", matrix_c);
     //println!("{:?}", matrix_identity);
@@ -135,14 +131,14 @@ fn main() {
         }
     }
     
-    atempt_lu_decomposition(&mut matrix_a);
+    //atempt_lu_decomposition(&mut matrix_a);
 
 
     //others implementations
     let matrix = vec![
-        vec![1.0, 2.0, 1.0],
-        vec![2.0, 6.0, 1.0],
-        vec![1.0, 1.0, 4.0],
+        vec![2.0, -3.0, 1.0],
+        vec![1.0, 2.0, -3.0],
+        vec![4.0, -1.0, -2.0],
     ];
 
     if let Ok((l_matrix, u_matrix)) = lu_decomposition_crout(&matrix) {
@@ -160,23 +156,23 @@ fn main() {
     }
 
     let L_matrix = vec![
-        vec![1.0, 0.0, 0.0],
-        vec![2.0, 2.0, 0.0],
-        vec![1.0, -1.0, 2.5],
+        vec![2.0, 0.0, 0.0],
+        vec![1.0, 3.5, 0.0],
+        vec![4.0, 5.0, 1.0],
     ];
 
-    let b_vector = vec![2.0, 7.0, 3.0];
+    let b_vector = vec![1.0, 4.0, 8.0];
 
     foward_substitution(&L_matrix, &b_vector);
 
 
     let U_matrix = vec![
-        vec![1.0, 2.0, 1.0],
-        vec![0.0, 1.0, -0.5],
+        vec![1.0, -1.5, 0.5],
+        vec![0.0, 1.0, -1.0],
         vec![0.0, 0.0, 1.0],
     ];
 
-    let y_vector = vec![2.0, 1.5, 1.0];
+    let y_vector = vec![0.5, 1.0, 1.0];
     back_substitution(&U_matrix, &y_vector);
 
 
