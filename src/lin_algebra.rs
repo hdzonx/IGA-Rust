@@ -25,7 +25,7 @@ impl LinAlgebra {
     //Solve linear equation sistem Ax = b using crout method
     // The LU Decomposition always work correctly when the matrices is
     // symetric positive-definite.
-    pub fn crout_method_solve(a_matrix: &Matrix, b_vector: &Vector) {
+    pub fn crout_method_solve(a_matrix: &Matrix, b_vector: &Vector) ->  Vector{
         let n = a_matrix.n_cols();
         let mut l_matrix: Matrix = Matrix::zeros(n, n);
         let mut u_matrix: Matrix = Matrix::identity(n);
@@ -50,17 +50,15 @@ impl LinAlgebra {
                 if l_matrix.get_value(j,j) == 0.0 {
                     panic!("Matrix is singular, LU decomposition failed.");
                 }
-
                 u_matrix.set_value(j,i, (a_matrix.get_value(j,i) - sum) / l_matrix.get_value(j,j));
             }
         }
-
         println!("L in lin_algerbra = {:?}", l_matrix);
         println!("U in lin_algerbra = {:?}", u_matrix);
 
         let y_vector: Vector = LinAlgebra::foward_substitution(&l_matrix, &b_vector);
-
         let x_vector: Vector = LinAlgebra::back_substitution(&u_matrix, &y_vector);
+        x_vector
     }
 
     fn foward_substitution(l_matrix: &Matrix, b_vector: &Vector) -> Vector {
