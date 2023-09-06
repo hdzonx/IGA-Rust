@@ -4,7 +4,7 @@ use crate::vector::Vector;
 //This file is only for tests and atempts for implement algorithms
 
 pub fn atempt_lu_decomposition(A: &mut Matrix) {
-    let n: usize = A.rows;
+    let n: usize = A.n_cols();
     let mut L: Matrix = Matrix::identity(n);
     let mut U: Matrix = Matrix::zeros(n, n);
 
