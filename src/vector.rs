@@ -1,13 +1,17 @@
-use std::fmt::{Debug, Formatter, Result};
+use std::fmt::Debug;
 #[derive(Debug)]
 pub struct Vector {
-    pub rows: usize,
-    pub value: Vec<f64>,
+    rows: usize,
+    value: Vec<f64>,
 }
 
 impl Vector {
-    pub fn set_value(&mut self, row: usize, data: f64) {
-        self.value[row] = data;
+    pub fn n_rows(&self) -> usize {
+        self.rows
+    }
+
+    pub fn set_value(&mut self, row: usize, val: f64) {
+        self.value[row] = val;
     }
 
     pub fn get_value(&self, row: usize) -> f64 {
@@ -53,6 +57,4 @@ impl Vector {
         }
         dot_value
     }
-
-
 }
