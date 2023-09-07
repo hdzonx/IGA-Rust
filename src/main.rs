@@ -4,6 +4,7 @@ pub mod matrix;
 pub mod vector;
 pub mod lin_algebra;
 pub mod atempts;
+pub mod numerical_integration;
 
 
 fn lu_decomposition_crout(
@@ -176,6 +177,7 @@ fn main() {
     back_substitution(&U_matrix, &y_vector);
 
 
+    let num = numerical_integration::NumericalIntegration::gauss_rule(6, 1);
 
 
 }
