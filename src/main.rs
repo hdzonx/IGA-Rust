@@ -177,7 +177,9 @@ fn main() {
     back_substitution(&U_matrix, &y_vector);
 
 
-    let num = numerical_integration::NumericalIntegration::gauss_rule(6, 1);
+    //let num = numerical_integration::NumericalIntegration::gauss_rule(6, 1);
+    let num = numerical_integration::GaussRule::new(4,1);
+    num.gauss_rule();
 
 
 }
