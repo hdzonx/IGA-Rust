@@ -1,11 +1,10 @@
 use atempts::atempt_lu_decomposition;
 
-pub mod matrix;
-pub mod vector;
-pub mod lin_algebra;
 pub mod atempts;
+pub mod lin_algebra;
+pub mod matrix;
 pub mod numerical_integration;
-
+pub mod vector;
 
 fn lu_decomposition_crout(
     matrix: &Vec<Vec<f64>>,
@@ -69,7 +68,7 @@ fn back_substitution(u_matrix: &Vec<Vec<f64>>, c_vector: &Vec<f64>) -> Vec<f64> 
     let n = u_matrix.len();
     let mut x_vector: Vec<f64> = vec![0.0; n];
 
-    x_vector[n-1] = c_vector[n-1] / u_matrix[n-1][n-1];
+    x_vector[n - 1] = c_vector[n - 1] / u_matrix[n - 1][n - 1];
     //reverse loop "for" counted step by step
     for i in (0..=n - 1).rev().step_by(1) {
         let mut sum = 0.0;
@@ -87,7 +86,7 @@ fn back_substitution(u_matrix: &Vec<Vec<f64>>, c_vector: &Vec<f64>) -> Vec<f64> 
 }
 
 fn main() {
-    let mut matrix_a = matrix::Matrix::zeros(3,3);
+    let mut matrix_a = matrix::Matrix::zeros(3, 3);
     //let mut matrix_b = matrix::Matrix::zeros(2,3);
 
     matrix_a.set_value(0, 0, 2.0);
@@ -100,23 +99,17 @@ fn main() {
     matrix_a.set_value(2, 1, -1.0);
     matrix_a.set_value(2, 2, -2.0);
 
-
     let mut vector_a = vector::Vector::zeros(3);
     vector_a.set_value(0, 1.0);
     vector_a.set_value(1, 4.0);
     vector_a.set_value(2, 8.0);
 
+    let vector_b = lin_algebra::LinAlgebra::crout_method_solve(&matrix_a, &vector_a);
 
-
-   let vector_b = lin_algebra::LinAlgebra::crout_method_solve(&matrix_a, &vector_a);
-
-   // println!("{:?}", matrix_c);
+    // println!("{:?}", matrix_c);
     //println!("{:?}", matrix_identity);
     //println!(" value is {}", value_in_pos);
-   // println!("vector is {:?}", vector_b);
-
-
-
+    // println!("vector is {:?}", vector_b);
 
     //for atempst.rs
     #[cfg(test)]
@@ -125,15 +118,14 @@ fn main() {
         fn exploration() {
             assert_eq!(2 + 2, 4);
         }
-    
+
         #[test]
         fn another() {
             panic!("Make this test fail");
         }
     }
-    
-    //atempt_lu_decomposition(&mut matrix_a);
 
+    //atempt_lu_decomposition(&mut matrix_a);
 
     //others implementations
     let matrix = vec![
@@ -166,7 +158,6 @@ fn main() {
 
     foward_substitution(&L_matrix, &b_vector);
 
-
     let U_matrix = vec![
         vec![1.0, -1.5, 0.5],
         vec![0.0, 1.0, -1.0],
@@ -176,16 +167,11 @@ fn main() {
     let y_vector = vec![0.5, 1.0, 1.0];
     back_substitution(&U_matrix, &y_vector);
 
-
     //let num = numerical_integration::NumericalIntegration::gauss_rule(6, 1);
-    let num = numerical_integration::GaussRule::new(4,1);
+    let mut num = numerical_integration::GaussRule::new(4, 1);
     num.gauss_rule();
-
-
+    let weight = num.get_weights();
+    println!("Weight in main: {:?}", weight);
+    let abscissas = num.get_abscissas();
+    println!("Abscissas in main: {:?}", abscissas);
 }
-
-
-
-
-
-
