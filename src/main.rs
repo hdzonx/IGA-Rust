@@ -168,7 +168,7 @@ fn main() {
     back_substitution(&U_matrix, &y_vector);
 
     //let num = numerical_integration::NumericalIntegration::gauss_rule(6, 1);
-    let mut num = numerical_integration::GaussRule::new(4, 1);
+    let mut num = numerical_integration::GaussRule::new(1, 1);
     num.gauss_rule();
     let weight = num.get_weights();
     println!("Weight in main: {:?}", weight);
