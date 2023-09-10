@@ -10,6 +10,10 @@ impl Vector {
         self.rows
     }
 
+    pub fn vector_values(&self) ->Vec<f64>{
+        self.value.clone()
+    }
+
     pub fn set_value(&mut self, row: usize, val: f64) {
         self.value[row] = val;
     }
