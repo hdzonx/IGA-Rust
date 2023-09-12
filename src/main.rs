@@ -1,6 +1,3 @@
-use atempts::atempt_lu_decomposition;
-
-pub mod atempts;
 pub mod lin_algebra;
 pub mod matrix;
 pub mod numerical_integration;
@@ -86,89 +83,8 @@ fn back_substitution(u_matrix: &Vec<Vec<f64>>, c_vector: &Vec<f64>) -> Vec<f64> 
 }
 
 fn main() {
-    let mut matrix_a = matrix::Matrix::zeros(3, 3);
-    //let mut matrix_b = matrix::Matrix::zeros(2,3);
 
-    matrix_a.set_value(0, 0, 2.0);
-    matrix_a.set_value(0, 1, -3.0);
-    matrix_a.set_value(0, 2, 1.0);
-    matrix_a.set_value(1, 0, 1.0);
-    matrix_a.set_value(1, 1, 2.0);
-    matrix_a.set_value(1, 2, -3.0);
-    matrix_a.set_value(2, 0, 4.0);
-    matrix_a.set_value(2, 1, -1.0);
-    matrix_a.set_value(2, 2, -2.0);
-
-    let mut vector_a = vector::Vector::zeros(3);
-    vector_a.set_value(0, 1.0);
-    vector_a.set_value(1, 4.0);
-    vector_a.set_value(2, 8.0);
-
-    let vector_b = lin_algebra::LinAlgebra::crout_method_solve(&matrix_a, &vector_a);
-
-    // println!("{:?}", matrix_c);
-    //println!("{:?}", matrix_identity);
-    //println!(" value is {}", value_in_pos);
-    // println!("vector is {:?}", vector_b);
-
-    //for atempst.rs
-    #[cfg(test)]
-    mod tests {
-        #[test]
-        fn exploration() {
-            assert_eq!(2 + 2, 4);
-        }
-
-        #[test]
-        fn another() {
-            panic!("Make this test fail");
-        }
-    }
-
-    //atempt_lu_decomposition(&mut matrix_a);
-
-    //others implementations
-    let matrix = vec![
-        vec![2.0, -3.0, 1.0],
-        vec![1.0, 2.0, -3.0],
-        vec![4.0, -1.0, -2.0],
-    ];
-
-    if let Ok((l_matrix, u_matrix)) = lu_decomposition_crout(&matrix) {
-        println!("L Matrix:");
-        for row in &l_matrix {
-            println!("{:?}", row);
-        }
-
-        println!("U Matrix:");
-        for row in &u_matrix {
-            println!("{:?}", row);
-        }
-    } else {
-        println!("LU decomposition failed.");
-    }
-
-    let L_matrix = vec![
-        vec![2.0, 0.0, 0.0],
-        vec![1.0, 3.5, 0.0],
-        vec![4.0, 5.0, 1.0],
-    ];
-
-    let b_vector = vec![1.0, 4.0, 8.0];
-
-    foward_substitution(&L_matrix, &b_vector);
-
-    let U_matrix = vec![
-        vec![1.0, -1.5, 0.5],
-        vec![0.0, 1.0, -1.0],
-        vec![0.0, 0.0, 1.0],
-    ];
-
-    let y_vector = vec![0.5, 1.0, 1.0];
-    back_substitution(&U_matrix, &y_vector);
-
-    //let num = numerical_integration::NumericalIntegration::gauss_rule(6, 1);
-    let mut num = numerical_integration::GaussRule::new(4, 1);
+    let mut num = numerical_integration::GaussRule::new(1, 1);
     num.gauss_rule();
     let weight = num.get_weights();
     println!("Weight in main: {:?}", weight);
