@@ -83,7 +83,7 @@ fn back_substitution(u_matrix: &Vec<Vec<f64>>, c_vector: &Vec<f64>) -> Vec<f64> 
 }
 
 fn main() {
-
+    
     let mut num = numerical_integration::GaussRule::new(1, 1);
     num.gauss_rule();
     let weight = num.get_weights();
