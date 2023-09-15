@@ -1,6 +1,7 @@
 use std::fmt::{Debug, Formatter, Result};
 
 //#[derive(Debug)]
+#[derive(PartialEq)]
 pub struct Matrix {
     rows: usize,
     cols: usize,

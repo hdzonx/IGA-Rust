@@ -1,4 +1,3 @@
-
 pub struct GaussRule {
     gauss_point_numbers: usize,
     dimension_problem: usize,
@@ -25,11 +24,6 @@ impl GaussRule {
         if gauss_point_numbers < 1 || gauss_point_numbers > 6 {
             panic!("not implmented for this number of Gauss integration points.")
         }
-        let mut total_num_of_integr_points: usize = 1;
-
-        for i in 0..dimension_problem {
-            total_num_of_integr_points *= gauss_point_numbers;
-        }
 
         let gauss = NumericalIntegration::values_gauss_rule(gauss_point_numbers);
 
@@ -51,7 +45,6 @@ impl GaussRule {
     }
 }
 
-
 #[derive(PartialEq, Debug)]
 struct NumericalIntegration {
     gauss_points: usize,
@@ -59,8 +52,6 @@ struct NumericalIntegration {
     abscissas: Vec<f64>,
 }
 impl NumericalIntegration {
-    
-
     fn values_gauss_rule(gauss_point_numbers: usize) -> Vec<NumericalIntegration> {
         let values = vec![
             NumericalIntegration {
@@ -147,66 +138,92 @@ impl NumericalIntegration {
 mod tests {
     use crate::numerical_integration;
     #[test]
-        fn test_new_value0(){
-            let mut num = numerical_integration::GaussRule::new(1, 1);
-            num.gauss_rule();
-            assert_eq!(vec![2.0] ,num.get_weights());
-            assert_eq!(vec![0.0] ,num.get_abscissas());
-        } 
-        #[test]
-        fn test_new_value1(){
-            let mut num = numerical_integration::GaussRule::new(2, 1);
-            num.gauss_rule();
-            assert_eq!(vec![1.0, 1.0] ,num.get_weights());
-            assert_eq!(vec![-0.57735027, 0.57735027] ,num.get_abscissas());
-        } 
-        #[test]
-        fn test_new_value3(){
-            let mut num = numerical_integration::GaussRule::new(3, 1);
-            num.gauss_rule();
-            assert_eq!(vec![0.55555555555, 0.8888888888888, 0.55555555555] ,num.get_weights());
-            assert_eq!(vec![-0.774596669, 0.0, 0.774596669] ,num.get_abscissas());
-        } 
-        #[test]
-        fn test_new_value4(){
-            let mut num = numerical_integration::GaussRule::new(4, 1);
-            num.gauss_rule();
-            assert_eq!(vec![0.3478548451, 0.6521451549, 0.6521451549, 0.3478548451] ,num.get_weights());
-            assert_eq!(vec![-0.8611363116, -0.3399810436, 0.3399810436, 0.8611363116] ,num.get_abscissas());
-        }
-        #[test]
-        fn test_new_value5(){
-            let mut num = numerical_integration::GaussRule::new(5, 1);
-            num.gauss_rule();
-            assert_eq!(vec![
+    fn test_new_value0() {
+        let mut num = numerical_integration::GaussRule::new(1, 1);
+        num.gauss_rule();
+        assert_eq!(vec![2.0], num.get_weights());
+        assert_eq!(vec![0.0], num.get_abscissas());
+    }
+    #[test]
+    fn test_new_value1() {
+        let mut num = numerical_integration::GaussRule::new(2, 1);
+        num.gauss_rule();
+        assert_eq!(vec![1.0, 1.0], num.get_weights());
+        assert_eq!(vec![-0.57735027, 0.57735027], num.get_abscissas());
+    }
+    #[test]
+    fn test_new_value3() {
+        let mut num = numerical_integration::GaussRule::new(3, 1);
+        num.gauss_rule();
+        assert_eq!(
+            vec![0.55555555555, 0.8888888888888, 0.55555555555],
+            num.get_weights()
+        );
+        assert_eq!(vec![-0.774596669, 0.0, 0.774596669], num.get_abscissas());
+    }
+    #[test]
+    fn test_new_value4() {
+        let mut num = numerical_integration::GaussRule::new(4, 1);
+        num.gauss_rule();
+        assert_eq!(
+            vec![0.3478548451, 0.6521451549, 0.6521451549, 0.3478548451],
+            num.get_weights()
+        );
+        assert_eq!(
+            vec![-0.8611363116, -0.3399810436, 0.3399810436, 0.8611363116],
+            num.get_abscissas()
+        );
+    }
+    #[test]
+    fn test_new_value5() {
+        let mut num = numerical_integration::GaussRule::new(5, 1);
+        num.gauss_rule();
+        assert_eq!(
+            vec![
                 0.2369268851,
                 0.4786286705,
                 0.56888888889,
                 0.4786286705,
-                0.2369268851,] ,num.get_weights());
-            assert_eq!(vec![
+                0.2369268851,
+            ],
+            num.get_weights()
+        );
+        assert_eq!(
+            vec![
                 -0.9061798459,
                 -0.5384693101,
                 0.0,
                 0.5384693101,
-                -0.9061798459,] ,num.get_abscissas());
-        }
-        #[test]
-        fn test_new_value6(){
-            let mut num = numerical_integration::GaussRule::new(6, 1);
-            num.gauss_rule();
-            assert_eq!(vec![0.1713244924,
+                -0.9061798459,
+            ],
+            num.get_abscissas()
+        );
+    }
+    #[test]
+    fn test_new_value6() {
+        let mut num = numerical_integration::GaussRule::new(6, 1);
+        num.gauss_rule();
+        assert_eq!(
+            vec![
+                0.1713244924,
                 0.3607615730,
                 0.4679139346,
                 0.4679139346,
                 0.3607615730,
-                0.1713244924,] ,num.get_weights());
-            assert_eq!(vec![ -0.9324695142,
+                0.1713244924,
+            ],
+            num.get_weights()
+        );
+        assert_eq!(
+            vec![
+                -0.9324695142,
                 -0.6612093865,
                 -0.2386191861,
                 0.2386191861,
                 0.6612093865,
-                0.9324695142,] ,num.get_abscissas());
-        }
-    
+                0.9324695142,
+            ],
+            num.get_abscissas()
+        );
+    }
 }
