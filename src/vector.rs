@@ -1,5 +1,6 @@
 use std::fmt::Debug;
 #[derive(Debug)]
+#[derive(PartialEq)]
 pub struct Vector {
     rows: usize,
     value: Vec<f64>,
