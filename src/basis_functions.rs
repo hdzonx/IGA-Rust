@@ -1,6 +1,5 @@
 use crate::matrix::Matrix;
 use crate::vector::Vector;
-
 pub struct BSpline {
     polinomial_order: usize,
     knot_vec: Vector,
@@ -71,9 +70,28 @@ impl BSpline {
         }
         bs_vector
     }
+
+    fn subreg_matrix(&self, sub_region_num: usize) ->Matrix {
+        let mut subreg_matrix = Matrix::zeros(sub_region_num, 2);
+        let mut subreg_vec = vec![0.0];
+
+        for i in 1..self.knot_vec.n_rows() {
+            if self.knot_vec.get_value(i) > self.knot_vec.get_value(i - 1) {
+                let val = self.knot_vec.get_value(i);
+                subreg_vec.push(val);
+            }
+        }
+        for i in 0..subreg_matrix.n_rows() {
+            for j in 1..subreg_matrix.n_cols() {
+                subreg_matrix.set_value(i, j-1, subreg_vec[i]);
+                subreg_matrix.set_value(i, j, subreg_vec[i+1]);
+            }
+        }
+        subreg_matrix
+    }
 }
 
-//////////////////////////
+/////////////////////////
 //
 //Tests
 //
@@ -169,8 +187,6 @@ mod tests {
     #[test]
     fn test_0_bs_vector() {
         let polinomial_order = 2;
-        let displacement = 0.03471592209999999;
-
         let mut knot_vector = Vector::zeros(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
@@ -193,8 +209,34 @@ mod tests {
         bs_vector_correct.set_value(1, 0.13163251691648037);
         bs_vector_correct.set_value(2, 0.0024103904945065356);
 
-        let bs_vec_calc: Vector = BSpline::new(polinomial_order, knot_vector).b_spline_vector(&bs_mat_correct);
+        let bs_vec_calc: Vector =
+            BSpline::new(polinomial_order, knot_vector).b_spline_vector(&bs_mat_correct);
 
-        assert_eq!(bs_vector_correct,bs_vec_calc);
+        assert_eq!(bs_vector_correct, bs_vec_calc);
+    }
+
+
+    #[test]
+    fn subreg_test_0(){
+        let polinomial_order = 2;
+        let subregion_num = 2;
+        let mut knot_vector = Vector::zeros(7);
+        knot_vector.set_value(0, 0.0);
+        knot_vector.set_value(1, 0.0);
+        knot_vector.set_value(2, 0.0);
+        knot_vector.set_value(3, 0.5);
+        knot_vector.set_value(4, 1.0);
+        knot_vector.set_value(5, 1.0);
+        knot_vector.set_value(6, 1.0);
+
+        let mut subreg_matrix_correct = Matrix::zeros(subregion_num, 2);
+        subreg_matrix_correct.set_value(0, 0, 0.0);
+        subreg_matrix_correct.set_value(0, 1, 0.5);
+        subreg_matrix_correct.set_value(1, 0, 0.5);
+        subreg_matrix_correct.set_value(1, 1, 1.0);
+
+        let subreg_cal = BSpline::new(polinomial_order, knot_vector).subreg_matrix(subregion_num);
+        assert_eq!(subreg_matrix_correct,subreg_cal);
+
     }
 }
