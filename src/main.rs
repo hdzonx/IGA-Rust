@@ -1,10 +1,6 @@
-use atempts::atempt_lu_decomposition;
-
 pub mod matrix;
 pub mod vector;
 pub mod lin_algebra;
-pub mod atempts;
-
 
 fn lu_decomposition_crout(
     matrix: &Vec<Vec<f64>>,
