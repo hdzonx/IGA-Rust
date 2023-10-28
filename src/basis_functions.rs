@@ -97,10 +97,50 @@ impl BSpline {
                 c2 = val_pol / old_c2;
             }
             let val = c1 * bs_matrix.get_value(i, self.polinomial_order - 1)
-                - c2*bs_matrix.get_value(i + 1, self.polinomial_order - 1);
+                - c2 * bs_matrix.get_value(i + 1, self.polinomial_order - 1);
             vec_frst_deriv.set_value(i, val);
         }
         vec_frst_deriv
+    }
+
+    fn bspline_sec_derive(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
+        let mut sec_deriv_vector = Vector::zeros(basis_fn_num);
+        let p = self.polinomial_order;
+        let val_pol = self.polinomial_order as f64;
+        for i in 0..basis_fn_num {
+            let mut c1 = (self.knot_vec.get_value(i + p) - self.knot_vec.get_value(i))
+                * (self.knot_vec.get_value(i + p - 1) - self.knot_vec.get_value(i));
+
+            if c1 != 0.0 {
+                c1 = val_pol * (val_pol - 1.0) / c1;
+            }
+
+            let mut c2a = (self.knot_vec.get_value(i + p) - self.knot_vec.get_value(i + 1))
+                * (self.knot_vec.get_value(i + p) - self.knot_vec.get_value(i));
+            if c2a != 0.0 {
+                c2a = val_pol * (val_pol - 1.0) / c2a;
+            }
+
+            let mut c2b = (self.knot_vec.get_value(i + p) - self.knot_vec.get_value(i + 1))
+                * (self.knot_vec.get_value(i + p + 1) - self.knot_vec.get_value(i + 1));
+            if c2b != 0.0 {
+                c2b = val_pol * (val_pol - 1.0) / c2b;
+            }
+
+            let c2 = c2a + c2b;
+
+            let mut c3 = (self.knot_vec.get_value(i + p + 1) - self.knot_vec.get_value(i + 1))
+                * (self.knot_vec.get_value(i + p + 1) - self.knot_vec.get_value(i + 2));
+            if c3 != 0.0 {
+                c3 = val_pol * (val_pol - 1.0) / c3;
+            }
+            let mut result = c1 * bs_matrix.get_value(i, p - 2)
+                - c2 * bs_matrix.get_value(i + 1, p - 2)
+                + c3 * bs_matrix.get_value(i + 2, p - 2);
+
+            sec_deriv_vector.set_value(i, result);
+        }
+        sec_deriv_vector
     }
 
     fn subreg_matrix(&self, sub_region_num: usize) -> Matrix {
@@ -299,7 +339,7 @@ mod tests {
         vec_correct_bspline_deriv.set_value(2, 0.13886368839999996);
         vec_correct_bspline_deriv.set_value(3, 0.0);
 
-        assert_eq!(vec_correct_bspline_deriv,calc_val);
+        assert_eq!(vec_correct_bspline_deriv, calc_val);
     }
 
     #[test]
@@ -331,6 +371,6 @@ mod tests {
         vec_correct_bspline_deriv.set_value(2, 0.6600189564000001);
         vec_correct_bspline_deriv.set_value(3, 0.0);
 
-        assert_eq!(vec_correct_bspline_deriv,calc_val);
+        assert_eq!(vec_correct_bspline_deriv, calc_val);
     }
 }

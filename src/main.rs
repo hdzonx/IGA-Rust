@@ -1,14 +1,8 @@
-<<<<<<< HEAD
 pub mod matrix;
 pub mod vector;
 pub mod lin_algebra;
-=======
-pub mod lin_algebra;
-pub mod matrix;
 pub mod numerical_integration;
-pub mod vector;
 pub mod basis_functions;
->>>>>>> 3d55358e2eb79543011c5669c24194aefbb50c49
 
 fn lu_decomposition_crout(
     matrix: &Vec<Vec<f64>>,
