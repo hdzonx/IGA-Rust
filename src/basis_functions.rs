@@ -97,10 +97,61 @@ impl BSpline {
                 c2 = val_pol / old_c2;
             }
             let val = c1 * bs_matrix.get_value(i, self.polinomial_order - 1)
-                - c2*bs_matrix.get_value(i + 1, self.polinomial_order - 1);
+                - c2 * bs_matrix.get_value(i + 1, self.polinomial_order - 1);
             vec_frst_deriv.set_value(i, val);
         }
         vec_frst_deriv
+    }
+
+    fn bspline_secnd_deriv(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
+        let pol_order = self.polinomial_order as f64;
+        let mut vec_secnd_deriv = Vector::zeros(basis_fn_num);
+        for i in 0..basis_fn_num {
+            println!("iteração {i}");
+            let mut c1 = (self.knot_vec.get_value(i + self.polinomial_order)
+                - self.knot_vec.get_value(i))
+                * (self.knot_vec.get_value(i + self.polinomial_order - 1)
+                    - self.knot_vec.get_value(i));
+            if c1 != 0.0 {
+                c1 = pol_order * (pol_order - 1.0) / c1;
+            }
+            println!("c1 = {c1}");
+
+            let mut c2a = (self.knot_vec.get_value(i + self.polinomial_order)
+                - self.knot_vec.get_value(i + 1))
+                * (self.knot_vec.get_value(i + self.polinomial_order) - self.knot_vec.get_value(i));
+            if c2a != 0.0 {
+                c2a = pol_order * (pol_order - 1.0) / c2a;
+            }
+            println!("c2a = {c2a}");
+            let mut c2b = (self.knot_vec.get_value(i + self.polinomial_order)
+                - self.knot_vec.get_value(i + 1))
+                * (self.knot_vec.get_value(i + self.polinomial_order + 1)
+                    - self.knot_vec.get_value(i + 1));
+            if c2b != 0.0 {
+                c2b = pol_order * (pol_order - 1.0) / c2b;
+            }
+            println!("c2b = {c2b}");
+            let c2 = c2a + c2b;
+            println!("c2 = {c2}");
+
+            let mut c3 = (self.knot_vec.get_value(i + self.polinomial_order + 1)
+                - self.knot_vec.get_value(i + 1))
+                * (self.knot_vec.get_value(i + self.polinomial_order + 1)
+                    - self.knot_vec.get_value(i + 2));
+            if c3 != 0.0 {
+                c3 = pol_order * (pol_order - 1.0) / c3;
+            }
+            println!("c3 = {c3}");
+
+            let val = c1 * bs_matrix.get_value(i, self.polinomial_order - 2)
+                - c2 * bs_matrix.get_value(i + 1, self.polinomial_order - 2)
+                + c3 * bs_matrix.get_value(i + 2, self.polinomial_order - 2);
+
+            vec_secnd_deriv.set_value(i, val);
+            println!("val = {val}");
+        }
+        vec_secnd_deriv
     }
 
     fn subreg_matrix(&self, sub_region_num: usize) -> Matrix {
@@ -299,7 +350,7 @@ mod tests {
         vec_correct_bspline_deriv.set_value(2, 0.13886368839999996);
         vec_correct_bspline_deriv.set_value(3, 0.0);
 
-        assert_eq!(vec_correct_bspline_deriv,calc_val);
+        assert_eq!(vec_correct_bspline_deriv, calc_val);
     }
 
     #[test]
@@ -331,6 +382,38 @@ mod tests {
         vec_correct_bspline_deriv.set_value(2, 0.6600189564000001);
         vec_correct_bspline_deriv.set_value(3, 0.0);
 
-        assert_eq!(vec_correct_bspline_deriv,calc_val);
+        assert_eq!(vec_correct_bspline_deriv, calc_val);
+    }
+
+    #[test]
+    fn b_spline_secnd_deriv_test_0() {
+        let mut bs_mat = Matrix::zeros(6, 3);
+        bs_mat.set_value(0, 2, 0.8659570925890132);
+        bs_mat.set_value(1, 1, 0.9305681558000001);
+        bs_mat.set_value(1, 2, 0.13163251691648037);
+        bs_mat.set_value(2, 0, 1.0);
+        bs_mat.set_value(2, 1, 0.06943184419999998);
+        bs_mat.set_value(2, 2, 0.0024103904945065356);
+
+        let basis_fn_num: usize = 4;
+        let mut knot_vector = Vector::zeros(7);
+        knot_vector.set_value(0, 0.0);
+        knot_vector.set_value(1, 0.0);
+        knot_vector.set_value(2, 0.0);
+        knot_vector.set_value(3, 0.5);
+        knot_vector.set_value(4, 1.0);
+        knot_vector.set_value(5, 1.0);
+        knot_vector.set_value(6, 1.0);
+
+        let derive_bs_matrix_calc = BSpline::new(2, knot_vector);
+        let calc_val = derive_bs_matrix_calc.bspline_secnd_deriv(&bs_mat, basis_fn_num);
+
+        let mut vec_correct_bspline_deriv = Vector::zeros(4);
+        vec_correct_bspline_deriv.set_value(0, 8.0);
+        vec_correct_bspline_deriv.set_value(1, -12.0);
+        vec_correct_bspline_deriv.set_value(2, 4.0);
+        vec_correct_bspline_deriv.set_value(3, 0.0);
+
+        assert_eq!(vec_correct_bspline_deriv, calc_val);
     }
 }
