@@ -1,7 +1,7 @@
-pub mod lin_algebra;
 pub mod matrix;
-pub mod numerical_integration;
 pub mod vector;
+pub mod lin_algebra;
+pub mod numerical_integration;
 pub mod basis_functions;
 
 fn lu_decomposition_crout(
