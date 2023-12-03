@@ -31,7 +31,7 @@ impl BSpline {
     }
 
     // Basis function of B-Spline in matricial format
-    fn b_spline_matrix(&self, mut displacement: f64) -> Matrix {
+    pub fn b_spline_matrix(&self, mut displacement: f64) -> Matrix {
         let rows: usize = self.knot_vec.n_rows() - 1;
         let cols: usize = self.polinomial_order + 1;
         let mut bs_matrix = Matrix::zeros(rows, cols);
@@ -76,8 +76,7 @@ impl BSpline {
         bs_matrix
     }
 
-    fn b_spline_vector(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
-        let kno_vec_len = self.knot_vec.n_rows();
+    pub fn b_spline_vector(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
         let polin_order = self.polinomial_order;
 
         let mut bs_vector = Vector::zeros(basis_fn_num);
@@ -216,7 +215,6 @@ mod tests {
         assert_eq!(2, sub_region_num_calculated);
     }
 
-
     #[test]
     fn calc_subregion_test1() {
         let mut knot_vector = Vector::zeros(11);
@@ -264,8 +262,6 @@ mod tests {
         let sub_region_num_calculated = bs_matrix_calc.calc_sub_region_num();
         assert_eq!(6, sub_region_num_calculated);
     }
-
-
 
     #[test]
     fn test_0_bs_matrix() {
