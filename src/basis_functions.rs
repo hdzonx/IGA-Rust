@@ -383,7 +383,6 @@ mod tests {
         vec_correct_bspline_deriv.set_value(3, 0.0);
 
         assert_eq!(vec_correct_bspline_deriv, calc_val);
-<<<<<<< HEAD
     }
 
     #[test]
@@ -416,7 +415,5 @@ mod tests {
         vec_correct_bspline_deriv.set_value(3, 0.0);
 
         assert_eq!(vec_correct_bspline_deriv, calc_val);
-=======
->>>>>>> fd4e7b5c32c41715d9ffb2c17ba16acade766d39
     }
 }
