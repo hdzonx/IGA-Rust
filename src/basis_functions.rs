@@ -13,14 +13,25 @@ impl BSpline {
         }
     }
 
-    fn basis_fn_num(&self) -> usize {
+    fn basis_func_numbers(&self) -> usize {
         let kno_vec_len = self.knot_vec.n_rows();
         let polin_order = self.polinomial_order;
         let n = kno_vec_len - polin_order - 1;
         n
     }
+    //Calculate the number of sub-Regions based on knot vector
+    fn calc_sub_region_num(&self) -> u32 {
+        let mut count: u32 = 0;
+        for i in 1..self.knot_vec.n_rows() {
+            if self.knot_vec.get_value(i - 1) != self.knot_vec.get_value(i) {
+                count += 1;
+            }
+        }
+        count
+    }
 
-    fn b_spline_matrix(&self, mut displacement: f64) -> Matrix {
+    // Basis function of B-Spline in matricial format
+    pub fn b_spline_matrix(&self, mut displacement: f64) -> Matrix {
         let rows: usize = self.knot_vec.n_rows() - 1;
         let cols: usize = self.polinomial_order + 1;
         let mut bs_matrix = Matrix::zeros(rows, cols);
@@ -65,8 +76,7 @@ impl BSpline {
         bs_matrix
     }
 
-    fn b_spline_vector(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
-        let kno_vec_len = self.knot_vec.n_rows();
+    pub fn b_spline_vector(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
         let polin_order = self.polinomial_order;
 
         let mut bs_vector = Vector::zeros(basis_fn_num);
@@ -186,6 +196,73 @@ mod tests {
     use crate::basis_functions::BSpline;
     use crate::matrix::Matrix;
     use crate::vector::Vector;
+
+    #[test]
+    fn calc_subregion_test0() {
+        let mut knot_vector = Vector::zeros(7);
+        knot_vector.set_value(0, 0.0);
+        knot_vector.set_value(1, 0.0);
+        knot_vector.set_value(2, 0.0);
+        knot_vector.set_value(3, 0.5);
+        knot_vector.set_value(4, 1.0);
+        knot_vector.set_value(5, 1.0);
+        knot_vector.set_value(6, 1.0);
+
+        let polinomial_order = 2;
+
+        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let sub_region_num_calculated = bs_matrix_calc.calc_sub_region_num();
+        assert_eq!(2, sub_region_num_calculated);
+    }
+
+    #[test]
+    fn calc_subregion_test1() {
+        let mut knot_vector = Vector::zeros(11);
+        knot_vector.set_value(0, 0.0);
+        knot_vector.set_value(1, 0.0);
+        knot_vector.set_value(2, 0.0);
+        knot_vector.set_value(3, 0.0);
+        knot_vector.set_value(4, 0.25);
+        knot_vector.set_value(5, 0.5);
+        knot_vector.set_value(6, 0.75);
+        knot_vector.set_value(7, 1.0);
+        knot_vector.set_value(8, 1.0);
+        knot_vector.set_value(9, 1.0);
+        knot_vector.set_value(10, 1.0);
+
+        let polinomial_order = 3;
+
+        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let sub_region_num_calculated = bs_matrix_calc.calc_sub_region_num();
+        assert_eq!(4, sub_region_num_calculated);
+    }
+
+    #[test]
+    fn calc_subregion_test3() {
+        let mut knot_vector = Vector::zeros(15);
+        knot_vector.set_value(0, 0.0);
+        knot_vector.set_value(1, 0.0);
+        knot_vector.set_value(2, 0.0);
+        knot_vector.set_value(3, 0.0);
+        knot_vector.set_value(4, 0.0);
+        knot_vector.set_value(5, 0.125);
+        knot_vector.set_value(6, 0.25);
+        knot_vector.set_value(7, 0.50);
+        knot_vector.set_value(8, 0.75);
+        knot_vector.set_value(9, 0.875);
+        knot_vector.set_value(10, 1.0);
+        knot_vector.set_value(11, 1.0);
+        knot_vector.set_value(12, 1.0);
+        knot_vector.set_value(13, 1.0);
+        knot_vector.set_value(14, 1.0);
+
+        let polinomial_order = 4;
+
+        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let sub_region_num_calculated = bs_matrix_calc.calc_sub_region_num();
+        assert_eq!(6, sub_region_num_calculated);
+    }
+
     #[test]
     fn test_0_bs_matrix() {
         let polinomial_order = 2;

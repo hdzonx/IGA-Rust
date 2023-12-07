@@ -13,8 +13,9 @@ impl GaussRule {
             weigth: vec![0.0; gauss_point_numbers],
             abscissas: vec![0.0; gauss_point_numbers],
         }
+        
     }
-    pub fn gauss_rule(&mut self) {
+   pub fn gauss_rule(&mut self) {
         let dimension_problem = self.dimension_problem;
         let gauss_point_numbers = self.gauss_point_numbers;
 
@@ -36,11 +37,11 @@ impl GaussRule {
         self.abscissas = abscissas;
     }
 
-    pub fn get_weights(&self) -> Vec<f64> {
+    pub fn weights(&self) -> Vec<f64> {
         self.weigth.clone()
     }
 
-    pub fn get_abscissas(&self) -> Vec<f64> {
+    pub fn abscissas(&self) -> Vec<f64> {
         self.abscissas.clone()
     }
 }
@@ -141,15 +142,15 @@ mod tests {
     fn test_new_value0() {
         let mut num = numerical_integration::GaussRule::new(1, 1);
         num.gauss_rule();
-        assert_eq!(vec![2.0], num.get_weights());
-        assert_eq!(vec![0.0], num.get_abscissas());
+        assert_eq!(vec![2.0], num.weights());
+        assert_eq!(vec![0.0], num.abscissas());
     }
     #[test]
     fn test_new_value1() {
         let mut num = numerical_integration::GaussRule::new(2, 1);
         num.gauss_rule();
-        assert_eq!(vec![1.0, 1.0], num.get_weights());
-        assert_eq!(vec![-0.57735027, 0.57735027], num.get_abscissas());
+        assert_eq!(vec![1.0, 1.0], num.weights());
+        assert_eq!(vec![-0.57735027, 0.57735027], num.abscissas());
     }
     #[test]
     fn test_new_value3() {
@@ -157,9 +158,9 @@ mod tests {
         num.gauss_rule();
         assert_eq!(
             vec![0.55555555555, 0.8888888888888, 0.55555555555],
-            num.get_weights()
+            num.weights()
         );
-        assert_eq!(vec![-0.774596669, 0.0, 0.774596669], num.get_abscissas());
+        assert_eq!(vec![-0.774596669, 0.0, 0.774596669], num.abscissas());
     }
     #[test]
     fn test_new_value4() {
@@ -167,11 +168,11 @@ mod tests {
         num.gauss_rule();
         assert_eq!(
             vec![0.3478548451, 0.6521451549, 0.6521451549, 0.3478548451],
-            num.get_weights()
+            num.weights()
         );
         assert_eq!(
             vec![-0.8611363116, -0.3399810436, 0.3399810436, 0.8611363116],
-            num.get_abscissas()
+            num.abscissas()
         );
     }
     #[test]
@@ -186,7 +187,7 @@ mod tests {
                 0.4786286705,
                 0.2369268851,
             ],
-            num.get_weights()
+            num.weights()
         );
         assert_eq!(
             vec![
@@ -196,7 +197,7 @@ mod tests {
                 0.5384693101,
                 -0.9061798459,
             ],
-            num.get_abscissas()
+            num.abscissas()
         );
     }
     #[test]
@@ -212,7 +213,7 @@ mod tests {
                 0.3607615730,
                 0.1713244924,
             ],
-            num.get_weights()
+            num.weights()
         );
         assert_eq!(
             vec![
@@ -223,7 +224,7 @@ mod tests {
                 0.6612093865,
                 0.9324695142,
             ],
-            num.get_abscissas()
+            num.abscissas()
         );
     }
 }

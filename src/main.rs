@@ -3,6 +3,7 @@ pub mod vector;
 pub mod lin_algebra;
 pub mod numerical_integration;
 pub mod basis_functions;
+pub mod processor;
 
 fn lu_decomposition_crout(
     matrix: &Vec<Vec<f64>>,
@@ -87,8 +88,10 @@ fn main() {
     
     let mut num = numerical_integration::GaussRule::new(1, 1);
     num.gauss_rule();
-    let weight = num.get_weights();
+    let weight = num.weights();
     println!("Weight in main: {:?}", weight);
-    let abscissas = num.get_abscissas();
+    let abscissas = num.abscissas();
     println!("Abscissas in main: {:?}", abscissas);
+
+
 }
