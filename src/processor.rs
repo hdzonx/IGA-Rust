@@ -38,7 +38,7 @@ impl Processor {
                     let mut nurbs_den = 0.0;
 
                     for n in 0..control_points_num {
-                        nurbs_den = bspline_vector.get_value(n) * nurbs_weight[n];
+                        nurbs_den  += bspline_vector.get_value(n) * nurbs_weight[n];
                     }
                     let nurbs_num = bspline_vector.get_value(m);
                     nurbs_vector.set_value(m, nurbs_num / nurbs_den);
