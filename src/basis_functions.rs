@@ -34,7 +34,7 @@ impl BSpline {
     pub fn b_spline_matrix(&self, mut displacement: f64) -> Matrix {
         let rows: usize = self.knot_vec.n_rows() - 1;
         let cols: usize = self.polinomial_order + 1;
-        let mut bs_matrix = Matrix::zeros(rows, cols);
+        let mut bs_matrix = Matrix::new(rows, cols);
 
         let base: f64 = 10.0;
         if displacement == 1.0 {
@@ -79,7 +79,7 @@ impl BSpline {
     pub fn b_spline_vector(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
         let polin_order = self.polinomial_order;
 
-        let mut bs_vector = Vector::zeros(basis_fn_num);
+        let mut bs_vector = Vector::new(basis_fn_num);
 
         for i in 0..basis_fn_num {
             bs_vector.set_value(i, bs_matrix.get_value(i, polin_order));
@@ -88,7 +88,7 @@ impl BSpline {
     }
 
     fn bspline_frst_deriv(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
-        let mut vec_frst_deriv = Vector::zeros(basis_fn_num);
+        let mut vec_frst_deriv = Vector::new(basis_fn_num);
 
         for i in 0..basis_fn_num {
             let mut c1: f64 =
@@ -115,7 +115,7 @@ impl BSpline {
 
     fn bspline_secnd_deriv(&self, bs_matrix: &Matrix, basis_fn_num: usize) -> Vector {
         let pol_order = self.polinomial_order as f64;
-        let mut vec_secnd_deriv = Vector::zeros(basis_fn_num);
+        let mut vec_secnd_deriv = Vector::new(basis_fn_num);
         for i in 0..basis_fn_num {
             println!("iteração {i}");
             let mut c1 = (self.knot_vec.get_value(i + self.polinomial_order)
@@ -164,8 +164,8 @@ impl BSpline {
         vec_secnd_deriv
     }
 
-    fn subreg_matrix(&self, sub_region_num: usize) -> Matrix {
-        let mut subreg_matrix = Matrix::zeros(sub_region_num, 2);
+   pub fn subreg_matrix(&self, sub_region_num: usize) -> Matrix {
+        let mut subreg_matrix = Matrix::new(sub_region_num, 2);
         let mut subreg_vec = vec![0.0];
 
         for i in 1..self.knot_vec.n_rows() {
@@ -199,7 +199,7 @@ mod tests {
 
     #[test]
     fn calc_subregion_test0() {
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -217,7 +217,7 @@ mod tests {
 
     #[test]
     fn calc_subregion_test1() {
-        let mut knot_vector = Vector::zeros(11);
+        let mut knot_vector = Vector::new(11);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -239,7 +239,7 @@ mod tests {
 
     #[test]
     fn calc_subregion_test3() {
-        let mut knot_vector = Vector::zeros(15);
+        let mut knot_vector = Vector::new(15);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -268,7 +268,7 @@ mod tests {
         let polinomial_order = 2;
         let displacement = 0.03471592209999999;
 
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -277,7 +277,7 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let mut bs_mat_correct = Matrix::zeros(6, 3);
+        let mut bs_mat_correct = Matrix::new(6, 3);
         bs_mat_correct.set_value(0, 2, 0.8659570925890132);
         bs_mat_correct.set_value(1, 1, 0.9305681558000001);
         bs_mat_correct.set_value(1, 2, 0.13163251691648037);
@@ -295,7 +295,7 @@ mod tests {
         let polinomial_order = 2;
         let displacement = 0.16500473910000002;
 
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -304,7 +304,7 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let mut bs_mat_correct = Matrix::zeros(6, 3);
+        let mut bs_mat_correct = Matrix::new(6, 3);
         bs_mat_correct.set_value(0, 2, 0.44888729930183624);
         bs_mat_correct.set_value(1, 1, 0.6699905218);
         bs_mat_correct.set_value(1, 2, 0.4966595728472456);
@@ -322,7 +322,7 @@ mod tests {
         let polinomial_order = 2;
         let displacement = 0.8349952609;
 
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -331,7 +331,7 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let mut bs_mat_correct = Matrix::zeros(6, 3);
+        let mut bs_mat_correct = Matrix::new(6, 3);
         bs_mat_correct.set_value(1, 2, 0.05445312785091815);
         bs_mat_correct.set_value(2, 1, 0.33000947820000004);
         bs_mat_correct.set_value(2, 2, 0.4966595728472456);
@@ -347,7 +347,7 @@ mod tests {
     #[test]
     fn test_0_bs_vector() {
         let polinomial_order = 2;
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -356,7 +356,7 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let mut bs_mat_correct = Matrix::zeros(6, 3);
+        let mut bs_mat_correct = Matrix::new(6, 3);
         bs_mat_correct.set_value(0, 2, 0.8659570925890132);
         bs_mat_correct.set_value(1, 1, 0.9305681558000001);
         bs_mat_correct.set_value(1, 2, 0.13163251691648037);
@@ -364,7 +364,7 @@ mod tests {
         bs_mat_correct.set_value(2, 1, 0.06943184419999998);
         bs_mat_correct.set_value(2, 2, 0.0024103904945065356);
 
-        let mut bs_vector_correct = Vector::zeros(4);
+        let mut bs_vector_correct = Vector::new(4);
         bs_vector_correct.set_value(0, 0.8659570925890132);
         bs_vector_correct.set_value(1, 0.13163251691648037);
         bs_vector_correct.set_value(2, 0.0024103904945065356);
@@ -379,7 +379,7 @@ mod tests {
     fn subreg_test_0() {
         let polinomial_order = 2;
         let subregion_num = 2;
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -388,7 +388,7 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let mut subreg_matrix_correct = Matrix::zeros(subregion_num, 2);
+        let mut subreg_matrix_correct = Matrix::new(subregion_num, 2);
         subreg_matrix_correct.set_value(0, 0, 0.0);
         subreg_matrix_correct.set_value(0, 1, 0.5);
         subreg_matrix_correct.set_value(1, 0, 0.5);
@@ -400,7 +400,7 @@ mod tests {
 
     #[test]
     fn b_spline_frst_derive_test_0() {
-        let mut bs_mat = Matrix::zeros(6, 3);
+        let mut bs_mat = Matrix::new(6, 3);
         bs_mat.set_value(0, 2, 0.8659570925890132);
         bs_mat.set_value(1, 1, 0.9305681558000001);
         bs_mat.set_value(1, 2, 0.13163251691648037);
@@ -409,7 +409,7 @@ mod tests {
         bs_mat.set_value(2, 2, 0.0024103904945065356);
 
         let basis_fn_num: usize = 4;
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -421,7 +421,7 @@ mod tests {
         let derive_bs_matrix_calc = BSpline::new(2, knot_vector);
         let calc_val = derive_bs_matrix_calc.bspline_frst_deriv(&bs_mat, basis_fn_num);
 
-        let mut vec_correct_bspline_deriv = Vector::zeros(4);
+        let mut vec_correct_bspline_deriv = Vector::new(4);
         vec_correct_bspline_deriv.set_value(0, -3.7222726232000003);
         vec_correct_bspline_deriv.set_value(1, 3.5834089348000004);
         vec_correct_bspline_deriv.set_value(2, 0.13886368839999996);
@@ -432,7 +432,7 @@ mod tests {
 
     #[test]
     fn b_spline_frst_derive_test_1() {
-        let mut bs_mat = Matrix::zeros(6, 3);
+        let mut bs_mat = Matrix::new(6, 3);
         bs_mat.set_value(0, 2, 0.44888729930183624);
         bs_mat.set_value(1, 1, 0.6699905218);
         bs_mat.set_value(1, 2, 0.4966595728472456);
@@ -441,7 +441,7 @@ mod tests {
         bs_mat.set_value(2, 2, 0.05445312785091815);
 
         let basis_fn_num: usize = 4;
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -453,7 +453,7 @@ mod tests {
         let derive_bs_matrix_calc = BSpline::new(2, knot_vector);
         let calc_val = derive_bs_matrix_calc.bspline_frst_deriv(&bs_mat, basis_fn_num);
 
-        let mut vec_correct_bspline_deriv = Vector::zeros(4);
+        let mut vec_correct_bspline_deriv = Vector::new(4);
         vec_correct_bspline_deriv.set_value(0, -2.6799620872);
         vec_correct_bspline_deriv.set_value(1, 2.0199431307999998);
         vec_correct_bspline_deriv.set_value(2, 0.6600189564000001);
@@ -464,7 +464,7 @@ mod tests {
 
     #[test]
     fn b_spline_secnd_deriv_test_0() {
-        let mut bs_mat = Matrix::zeros(6, 3);
+        let mut bs_mat = Matrix::new(6, 3);
         bs_mat.set_value(0, 2, 0.8659570925890132);
         bs_mat.set_value(1, 1, 0.9305681558000001);
         bs_mat.set_value(1, 2, 0.13163251691648037);
@@ -473,7 +473,7 @@ mod tests {
         bs_mat.set_value(2, 2, 0.0024103904945065356);
 
         let basis_fn_num: usize = 4;
-        let mut knot_vector = Vector::zeros(7);
+        let mut knot_vector = Vector::new(7);
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -485,7 +485,7 @@ mod tests {
         let derive_bs_matrix_calc = BSpline::new(2, knot_vector);
         let calc_val = derive_bs_matrix_calc.bspline_secnd_deriv(&bs_mat, basis_fn_num);
 
-        let mut vec_correct_bspline_deriv = Vector::zeros(4);
+        let mut vec_correct_bspline_deriv = Vector::new(4);
         vec_correct_bspline_deriv.set_value(0, 8.0);
         vec_correct_bspline_deriv.set_value(1, -12.0);
         vec_correct_bspline_deriv.set_value(2, 4.0);

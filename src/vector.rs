@@ -23,7 +23,7 @@ impl Vector {
         self.value[row]
     }
 
-    pub fn zeros(rows: usize) -> Vector {
+    pub fn new(rows: usize) -> Vector {
         Vector {
             rows,
             value: vec![0.0; rows],
@@ -34,7 +34,7 @@ impl Vector {
         if self.rows != other.rows {
             panic!("add vector of different dimension is not possible")
         }
-        let mut new_vector = Vector::zeros(self.rows);
+        let mut new_vector = Vector::new(self.rows);
         for i in 0..self.rows {
             new_vector.value[i] = self.value[i] + other.value[i];
         }
@@ -45,7 +45,7 @@ impl Vector {
         if self.rows != other.rows {
             panic!("subtract vector of different dimension is not possible")
         }
-        let mut new_vector = Vector::zeros(self.rows);
+        let mut new_vector = Vector::new(self.rows);
         for i in 0..self.rows {
             new_vector.value[i] = self.value[i] - other.value[i];
         }

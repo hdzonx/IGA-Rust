@@ -10,7 +10,7 @@ impl LinAlgebra {
             panic!("Invalid multiplication due to mismatched dimensions.")
         }
         let n = matrix.n_cols();
-        let mut new_vector: Vector = Vector::zeros(n);
+        let mut new_vector: Vector = Vector::new(n);
         for i in 0..new_vector.n_rows() {
             let mut val = 0.0;
             for j in 0..n {
@@ -26,7 +26,7 @@ impl LinAlgebra {
     // symetric positive-definite.
     pub fn crout_method_solve(a_matrix: &Matrix, b_vector: &Vector) ->  Vector{
         let n = a_matrix.n_cols();
-        let mut l_matrix: Matrix = Matrix::zeros(n, n);
+        let mut l_matrix: Matrix = Matrix::new(n, n);
         let mut u_matrix: Matrix = Matrix::identity(n);
 
         //get low matrix
@@ -61,7 +61,7 @@ impl LinAlgebra {
 
     fn foward_substitution(l_matrix: &Matrix, b_vector: &Vector) -> Vector {
         let n = l_matrix.n_cols();
-        let mut y_vector: Vector = Vector::zeros(n);
+        let mut y_vector: Vector = Vector::new(n);
         y_vector.set_value(0, b_vector.get_value(0) / l_matrix.get_value(0,0));
 
         for i in 1..(n) {
@@ -77,7 +77,7 @@ impl LinAlgebra {
 
     fn back_substitution(u_matrix: &Matrix, y_vector: &Vector) -> Vector {
         let n = u_matrix.n_cols();
-        let mut x_vector: Vector = Vector::zeros(n);
+        let mut x_vector: Vector = Vector::new(n);
 
         x_vector.set_value(
             n - 1,
@@ -111,7 +111,7 @@ mod test{
     use crate::vector;
     #[test]
     fn test_linear_eq_system_0(){
-        let mut matrix_a = matrix::Matrix::zeros(3, 3);
+        let mut matrix_a = matrix::Matrix::new(3, 3);
 
         matrix_a.set_value(0, 0, 2.0);
         matrix_a.set_value(0, 1, -3.0);
@@ -123,7 +123,7 @@ mod test{
         matrix_a.set_value(2, 1, -1.0);
         matrix_a.set_value(2, 2, -2.0);
     
-        let mut vector_a = vector::Vector::zeros(3);
+        let mut vector_a = vector::Vector::new(3);
         vector_a.set_value(0, 1.0);
         vector_a.set_value(1, 4.0);
         vector_a.set_value(2, 8.0);
@@ -135,7 +135,7 @@ mod test{
 
     #[test]
     fn test_linear_eq_system_1(){
-        let mut matrix_a = matrix::Matrix::zeros(3, 3);
+        let mut matrix_a = matrix::Matrix::new(3, 3);
 
         matrix_a.set_value(0, 0, 1.0);
         matrix_a.set_value(0, 1, 3.0);
@@ -147,7 +147,7 @@ mod test{
         matrix_a.set_value(2, 1, -1.0);
         matrix_a.set_value(2, 2, 1.0);
     
-        let mut vector_a = vector::Vector::zeros(3);
+        let mut vector_a = vector::Vector::new(3);
         vector_a.set_value(0, 0.0);
         vector_a.set_value(1, 1.0);
         vector_a.set_value(2, 3.0);
@@ -159,7 +159,7 @@ mod test{
 
     #[test]
     fn test_linear_eq_system_2(){
-        let mut matrix_a = matrix::Matrix::zeros(3, 3);
+        let mut matrix_a = matrix::Matrix::new(3, 3);
 
         matrix_a.set_value(0, 0, 1.0);
         matrix_a.set_value(0, 1, 1.0);
@@ -171,7 +171,7 @@ mod test{
         matrix_a.set_value(2, 1, 4.0);
         matrix_a.set_value(2, 2, 5.0);
     
-        let mut vector_a = vector::Vector::zeros(3);
+        let mut vector_a = vector::Vector::new(3);
         vector_a.set_value(0, 1.0);
         vector_a.set_value(1, 2.0);
         vector_a.set_value(2, 4.0);
@@ -183,7 +183,7 @@ mod test{
 
     #[test]
     fn test_linear_eq_system_3(){
-        let mut matrix_a = matrix::Matrix::zeros(2, 2);
+        let mut matrix_a = matrix::Matrix::new(2, 2);
 
         matrix_a.set_value(0, 0, 1.0);
         matrix_a.set_value(0, 1, -1.0);
@@ -191,7 +191,7 @@ mod test{
         matrix_a.set_value(1, 1, 1.0);
 
     
-        let mut vector_a = vector::Vector::zeros(3);
+        let mut vector_a = vector::Vector::new(3);
         vector_a.set_value(0, 4.0);
         vector_a.set_value(1, 8.0);
     

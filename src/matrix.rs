@@ -24,7 +24,7 @@ impl Matrix {
         self.value[row][col]
     }
 
-    pub fn zeros(rows: usize, cols: usize) -> Matrix {
+    pub fn new(rows: usize, cols: usize) -> Matrix {
         Matrix {
             rows,
             cols,
@@ -33,7 +33,7 @@ impl Matrix {
     }
 
     pub fn identity(order: usize) -> Matrix {
-        let mut mat = Matrix::zeros(order, order);
+        let mut mat = Matrix::new(order, order);
 
         for i in 0..order {
             for j in 0..order {
@@ -50,7 +50,7 @@ impl Matrix {
             panic!("add matrix of different dimension is not possible")
         }
 
-        let mut mat = Matrix::zeros(self.rows, self.cols);
+        let mut mat = Matrix::new(self.rows, self.cols);
 
         for i in 0..self.rows {
             for j in 0..self.cols {
@@ -66,7 +66,7 @@ impl Matrix {
             panic!("subtract matrix of different dimension is not possible")
         }
 
-        let mut mat = Matrix::zeros(self.rows, self.cols);
+        let mut mat = Matrix::new(self.rows, self.cols);
 
         for i in 0..self.rows {
             for j in 0..self.cols {
@@ -78,7 +78,7 @@ impl Matrix {
     }
 
     pub fn transpose(&self) -> Matrix {
-        let mut mat = Matrix::zeros(self.rows, self.cols);
+        let mut mat = Matrix::new(self.rows, self.cols);
 
         for i in 0..self.rows {
             for j in 0..self.cols {
@@ -93,7 +93,7 @@ impl Matrix {
             panic!("multiply matrices of incompatible dimension is not possible");
         }
 
-        let mut mat = Matrix::zeros(self.rows, other.cols);
+        let mut mat = Matrix::new(self.rows, other.cols);
 
         for i in 0..self.rows {
             for j in 0..self.cols {
@@ -112,7 +112,7 @@ impl Matrix {
             panic!("dot multiplication of imcopatible dimension is not possible");
         }
 
-        let mut mat = Matrix::zeros(self.rows, self.cols);
+        let mut mat = Matrix::new(self.rows, self.cols);
 
         for i in 0..self.rows {
             for j in 0..self.cols {
