@@ -12,6 +12,8 @@ impl Processor {
         gauss: GaussRule,
         polinomial_order: usize,
         knot_vector: Vector,
+        beam_lenght: f64,
+        load: f64,
     ) {
         let gauss_abscissas = gauss.abscissas();
         let gauss_weight = gauss.weights();
@@ -26,24 +28,28 @@ impl Processor {
         for i in 0..subregion_num {
             let subreg_initial = subregion_matrix.get_value(i, 0);
             let subreg_final = subregion_matrix.get_value(i, 1);
+
             for j in 0..gauss_point_numbers {
                 let displacement = (1.0 - gauss_abscissas[j]) * subreg_initial / 2.0
                     + (1.0 + gauss_abscissas[j]) * subreg_final / 2.0;
-
                 let bspline_matrix = bspline_function.b_spline_matrix(displacement);
                 let bspline_vector =
                     bspline_function.b_spline_vector(&bspline_matrix, control_points_num);
 
                 for m in 0..control_points_num {
                     let mut nurbs_den = 0.0;
-
                     for n in 0..control_points_num {
-                        nurbs_den  += bspline_vector.get_value(n) * nurbs_weight[n];
+                        nurbs_den += bspline_vector.get_value(n) * nurbs_weight[n];
                     }
-                    let nurbs_num = bspline_vector.get_value(m);
+                    let nurbs_num = bspline_vector.get_value(m) * nurbs_weight[m];
                     nurbs_vector.set_value(m, nurbs_num / nurbs_den);
                 }
                 println!("b_spline vector = {:?}", bspline_vector);
+
+                let dxdxsi = (subreg_final - subreg_initial)*beam_lenght/2.0; //verificar a compatibilidade desta função com nurbs
+                let escalar = load*dxdxsi*gauss_weight[j];
+                
+                
             }
         }
         println!("nurbs vector = {:?}", nurbs_vector);
@@ -61,10 +67,12 @@ mod tests {
     fn test_force_vector_0() {
         let mut gauss = numerical_integration::GaussRule::new(1, 1);
         gauss.gauss_rule();
-        let nurbs_weight: &Vec<f64> = &vec![1.0, 1.0, 1.0, 1.0];
+        let nurbs_weight: &Vec<f64> = &vec![1.0, 1.0, 2.0, 1.0];
         let subregion_num: usize = 2;
-        let polinominal_order: usize = 2;
+        let polinomial_order: usize = 2;
         let mut knot_vector = vector::Vector::new(7);
+        let beam_lenght: f64 = 2.0;
+        let load: f64 = 25.0;
         knot_vector.set_value(0, 0.0);
         knot_vector.set_value(1, 0.0);
         knot_vector.set_value(2, 0.0);
@@ -77,8 +85,10 @@ mod tests {
             subregion_num,
             nurbs_weight,
             gauss,
-            polinominal_order,
+            polinomial_order,
             knot_vector,
+            beam_lenght,
+            load,
         );
     }
 }
