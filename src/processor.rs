@@ -14,7 +14,7 @@ impl Processor {
         knot_vector: Vector,
         beam_lenght: f64,
         load: f64,
-    ) {
+    ) ->Vector {
         let gauss_abscissas = gauss.abscissas();
         let gauss_weight = gauss.weights();
         let gauss_point_numbers = gauss.abscissas().len();
@@ -24,6 +24,7 @@ impl Processor {
 
         let subregion_matrix = bspline_function.subreg_matrix(subregion_num); //subregion matrix has n rows and 2 columns
         let mut nurbs_vector = Vector::new(control_points_num);
+        let mut force_vector = Vector::new(control_points_num);
 
         for i in 0..subregion_num {
             let subreg_initial = subregion_matrix.get_value(i, 0);
@@ -46,14 +47,20 @@ impl Processor {
                 }
                 println!("b_spline vector = {:?}", bspline_vector);
 
-                let dxdxsi = (subreg_final - subreg_initial)*beam_lenght/2.0; //verificar a compatibilidade desta função com nurbs
-                let escalar = load*dxdxsi*gauss_weight[j];
-                
-                
+                let dxdxsi = (subreg_final - subreg_initial) * beam_lenght / 2.0; //verificar a compatibilidade desta função com nurbs
+                let scalar = load * dxdxsi * gauss_weight[j];
+                let d_force_vector = nurbs_vector.scalar_by_vector(scalar);
+                println!("dforce vector = {:?}", d_force_vector);
+
+                force_vector.add_vector(d_force_vector);
             }
+    
         }
         println!("nurbs vector = {:?}", nurbs_vector);
+        println!("force vector = {:?}", force_vector);
+        force_vector
     }
+
 }
 
 #[cfg(test)]
@@ -67,7 +74,7 @@ mod tests {
     fn test_force_vector_0() {
         let mut gauss = numerical_integration::GaussRule::new(1, 1);
         gauss.gauss_rule();
-        let nurbs_weight: &Vec<f64> = &vec![1.0, 1.0, 2.0, 1.0];
+        let nurbs_weight: &Vec<f64> = &vec![1.0, 2.0, 2.0, 1.0];
         let subregion_num: usize = 2;
         let polinomial_order: usize = 2;
         let mut knot_vector = vector::Vector::new(7);

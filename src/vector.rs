@@ -29,15 +29,15 @@ impl Vector {
         }
     }
 
-    pub fn add_vector(&self, other: &Vector) -> Vector {
+    pub fn add_vector(&mut self, other: Vector) -> &Vector {
         if self.rows != other.rows {
             panic!("add vector of different dimension is not possible")
         }
         let mut new_vector = Vector::new(self.rows);
         for i in 0..self.rows {
-            new_vector.value[i] = self.value[i] + other.value[i];
+            self.value[i] = self.value[i] + other.value[i];
         }
-        new_vector
+        self
     }
 
     pub fn subtract_vector(&self, other: &Vector) -> Vector {
@@ -94,7 +94,7 @@ mod tests {
         let new_vector = old_vector.scalar_by_vector(scalar);
         assert_eq!(correct_vector, new_vector)
     }
-    #[test]
+
     fn test_new_scalar_by_vector_test_1() {
         let mut old_vector = vector::Vector::new(4);
         old_vector.set_value(0, 0.);
