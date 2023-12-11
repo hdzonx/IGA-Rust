@@ -164,7 +164,7 @@ impl BSpline {
         vec_secnd_deriv
     }
 
-   pub fn subreg_matrix(&self, sub_region_num: usize) -> Matrix {
+    pub fn subreg_matrix(&self, sub_region_num: usize) -> Matrix {
         let mut subreg_matrix = Matrix::new(sub_region_num, 2);
         let mut subreg_vec = vec![0.0];
 
@@ -181,6 +181,24 @@ impl BSpline {
             }
         }
         subreg_matrix
+    }
+
+    pub fn new_nurbs_vector(
+        &self,
+        nurbs_weight: Vec<f64>,
+        bspline_vector: Vector,
+    ) {
+        let control_points_num = nurbs_weight.len();
+        let mut nurbs_vector = Vector::new(control_points_num);
+        for m in 0..control_points_num {
+            let mut nurbs_den = 0.0;
+
+            for n in 0..control_points_num {
+                nurbs_den += bspline_vector.get_value(n) * nurbs_weight[n];
+            }
+            let nurbs_num = bspline_vector.get_value(m) * nurbs_weight[m];
+            nurbs_vector.set_value(m, nurbs_num / nurbs_den);
+        }
     }
 }
 
