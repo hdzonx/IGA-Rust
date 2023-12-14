@@ -4,6 +4,7 @@ pub mod lin_algebra;
 pub mod numerical_integration;
 pub mod basis_functions;
 pub mod processor;
+pub mod util;
 
 fn lu_decomposition_crout(
     matrix: &Vec<Vec<f64>>,

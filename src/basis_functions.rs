@@ -30,7 +30,7 @@ impl BSpline {
         count
     }
 
-    // Basis function of B-Spline in matricial format
+    //Basis function of B-Spline in matricial format
     pub fn b_spline_matrix(&self, mut displacement: f64) -> Matrix {
         let rows: usize = self.knot_vec.n_rows() - 1;
         let cols: usize = self.polinomial_order + 1;
@@ -184,7 +184,8 @@ impl BSpline {
     }
 
     pub fn nurbs_vector(&self, nurbs_weight: &Vec<f64>, bspline_vector: &Vector) -> Vector {
-        let control_points_num = nurbs_weight.len();
+        
+        let control_points_num = self.basis_func_numbers();
         let mut nurbs_vector = Vector::new(control_points_num);
         for m in 0..control_points_num {
             let mut nurbs_den = 0.0;
@@ -227,7 +228,7 @@ mod tests {
         knot_vector.set_value(6, 1.0);
 
         let mut bs = Vector::new(4);
-        bs.set_value(0, 0.);
+        bs.set_value(0, 0.0);
         bs.set_value(1, 0.625);
         bs.set_value(2, 0.125);
         bs.set_value(3, 0.25);
@@ -298,6 +299,35 @@ mod tests {
         assert_eq!(val, 1.0);
     }
 
+
+    #[test]
+    fn partition_unit_test_nurbs_3() {
+        let nurbs_weight: &Vec<f64> = &vec![0.0, 0.0, 0.0, 1.0];
+
+        let polinomial_order: usize = 2;
+        let mut knot_vector = Vector::new(7);
+        knot_vector.set_value(0, 0.0);
+        knot_vector.set_value(1, 0.0);
+        knot_vector.set_value(2, 0.0);
+        knot_vector.set_value(3, 0.5);
+        knot_vector.set_value(4, 1.0);
+        knot_vector.set_value(5, 1.0);
+        knot_vector.set_value(6, 1.0);
+
+        let mut bs = Vector::new(4);
+        bs.set_value(0, 0.);
+        bs.set_value(1, 0.625);
+        bs.set_value(2, 0.125);
+        bs.set_value(3, 0.25);
+
+        let basis_fn = BSpline::new(polinomial_order, knot_vector);
+        let nurbs = basis_fn.nurbs_vector(nurbs_weight, &bs);
+        let mut val = 0.0;
+        for i in 0..nurbs.n_rows() {
+            val += nurbs.get_value(i);
+        }
+        assert_eq!(val, 1.0);
+    }
     #[test]
     fn calc_subregion_test0() {
         let mut knot_vector = Vector::new(7);
