@@ -184,19 +184,45 @@ impl BSpline {
     }
 
     pub fn nurbs_vector(&self, nurbs_weight: &Vec<f64>, bspline_vector: &Vector) -> Vector {
-        
         let control_points_num = self.basis_func_numbers();
         let mut nurbs_vector = Vector::new(control_points_num);
         for m in 0..control_points_num {
             let mut nurbs_den = 0.0;
 
             for n in 0..control_points_num {
+                if nurbs_weight[n] == 0.0 {
+                    panic!(" NURBS weight values must be greater or equal to 1")
+                }
                 nurbs_den += bspline_vector.get_value(n) * nurbs_weight[n];
             }
             let nurbs_num = bspline_vector.get_value(m) * nurbs_weight[m];
             nurbs_vector.set_value(m, nurbs_num / nurbs_den);
         }
         nurbs_vector
+    }
+    fn weight_times_vector(&self, weight: &Vec<f64>, vector: &Vector) -> f64 {
+        let mut val = 0.0;
+        for i in 0..weight.len() {
+            val += weight[i] * vector.get_value(i);
+        }
+        val
+    }
+
+    fn nurbs_frst_deriv(
+        &self,
+        nurbs_weight: &Vec<f64>,
+        bspline: &Vector,
+        bspline_frst_deriv: &Vector,
+    ) -> Vector {
+        let mut nurbs_ft_deriv = Vector::new(nurbs_weight.len());
+  
+        for i in 0..nurbs_weight.len() {
+            let w = self.weight_times_vector(nurbs_weight, bspline);
+            let w_deriv = self.weight_times_vector(nurbs_weight, bspline_frst_deriv);
+            let val = nurbs_weight[i] * (w * bspline_frst_deriv.get_value(i) - w_deriv*bspline.get_value(i) / (w*w));
+            nurbs_ft_deriv.set_value(i, val);
+        }
+        nurbs_ft_deriv
     }
 }
 
@@ -212,6 +238,33 @@ mod tests {
     use crate::basis_functions::BSpline;
     use crate::matrix::Matrix;
     use crate::vector::Vector;
+
+    #[test]
+    fn weight_deriv_nurbs_0() {
+        let mut bs_mat = Matrix::new(6, 3);
+
+        let basis_fn_num: usize = 4;
+        let mut knot_vector = Vector::new(7);
+        knot_vector.set_value(0, 0.0);
+        knot_vector.set_value(1, 0.0);
+        knot_vector.set_value(2, 0.0);
+        knot_vector.set_value(3, 0.5);
+        knot_vector.set_value(4, 1.0);
+        knot_vector.set_value(5, 1.0);
+        knot_vector.set_value(6, 1.0);
+
+        let nurbs_weight: &Vec<f64> = &vec![1.0, 1.0, 1.0, 1.0];
+
+        let mut vec_correct_bspline_deriv = Vector::new(4);
+        vec_correct_bspline_deriv.set_value(0, -3.7222726232000003);
+        vec_correct_bspline_deriv.set_value(1, 3.5834089348000004);
+        vec_correct_bspline_deriv.set_value(2, 0.13886368839999996);
+        vec_correct_bspline_deriv.set_value(3, 0.0);
+
+       // let nur_1_der = BSpline::weight_times_vector(nurbs_weight, &vec_correct_bspline_deriv);
+
+      //  assert_eq!(1.1102230246251565e-16, nur_1_der);
+    }
 
     #[test]
     fn partition_unit_test_nurbs_0() {
@@ -299,10 +352,9 @@ mod tests {
         assert_eq!(val, 1.0);
     }
 
-
     #[test]
     fn partition_unit_test_nurbs_3() {
-        let nurbs_weight: &Vec<f64> = &vec![0.0, 0.0, 0.0, 1.0];
+        let nurbs_weight: &Vec<f64> = &vec![1.0, 1.0, 1.0, 1.0];
 
         let polinomial_order: usize = 2;
         let mut knot_vector = Vector::new(7);
