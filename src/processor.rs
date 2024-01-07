@@ -1,4 +1,4 @@
-use crate::basis_functions::BSpline;
+use crate::basis_functions::BasisFunctions;
 use crate::matrix::Matrix;
 use crate::numerical_integration::GaussRule;
 use crate::vector::Vector;
@@ -20,7 +20,7 @@ impl Processor {
         let gauss_point_numbers = gauss.abscissas().len();
         let control_points_num = nurbs_weight.len();
 
-        let basis_function = BSpline::new(polinomial_order, knot_vector);
+        let basis_function = BasisFunctions::new(polinomial_order, knot_vector);
 
         let subregion_matrix = basis_function.subreg_matrix(subregion_num); //subregion matrix has n rows and 2 columns
         //let mut nurbs_vector = Vector::new(control_points_num);

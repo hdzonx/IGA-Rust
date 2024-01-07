@@ -1,13 +1,13 @@
 use crate::matrix::Matrix;
 use crate::vector::Vector;
-pub struct BSpline {
+pub struct BasisFunctions {
     polinomial_order: usize,
     knot_vec: Vector,
 }
 
-impl BSpline {
-    pub fn new(polinomial_order: usize, knot_vec: Vector) -> BSpline {
-        BSpline {
+impl BasisFunctions {
+    pub fn new(polinomial_order: usize, knot_vec: Vector) -> BasisFunctions {
+        BasisFunctions {
             polinomial_order: polinomial_order,
             knot_vec: knot_vec,
         }
@@ -190,7 +190,7 @@ impl BSpline {
             let mut nurbs_den = 0.0;
 
             for n in 0..control_points_num {
-                if nurbs_weight[n] == 0.0 {
+                if nurbs_weight[n] <= 0.0 {
                     panic!(" NURBS weight values must be greater or equal to 1")
                 }
                 nurbs_den += bspline_vector.get_value(n) * nurbs_weight[n];
@@ -215,11 +215,12 @@ impl BSpline {
         bspline_frst_deriv: &Vector,
     ) -> Vector {
         let mut nurbs_ft_deriv = Vector::new(nurbs_weight.len());
-  
+
         for i in 0..nurbs_weight.len() {
             let w = self.weight_times_vector(nurbs_weight, bspline);
             let w_deriv = self.weight_times_vector(nurbs_weight, bspline_frst_deriv);
-            let val = nurbs_weight[i] * (w * bspline_frst_deriv.get_value(i) - w_deriv*bspline.get_value(i) / (w*w));
+            let val = nurbs_weight[i]
+                * (w * bspline_frst_deriv.get_value(i) - w_deriv * bspline.get_value(i) / (w * w));
             nurbs_ft_deriv.set_value(i, val);
         }
         nurbs_ft_deriv
@@ -235,13 +236,19 @@ impl BSpline {
 #[cfg(test)]
 
 mod tests {
-    use crate::basis_functions::BSpline;
+    use crate::basis_functions::BasisFunctions;
     use crate::matrix::Matrix;
     use crate::vector::Vector;
 
     #[test]
-    fn weight_deriv_nurbs_0() {
+    fn first_deriv_nurbs_0() {
         let mut bs_mat = Matrix::new(6, 3);
+        bs_mat.set_value(0, 2, 0.8659570925890132);
+        bs_mat.set_value(1, 1, 0.9305681558000001);
+        bs_mat.set_value(1, 2, 0.13163251691648037);
+        bs_mat.set_value(2, 0, 1.0);
+        bs_mat.set_value(2, 1, 0.06943184419999998);
+        bs_mat.set_value(2, 2, 0.0024103904945065356);
 
         let basis_fn_num: usize = 4;
         let mut knot_vector = Vector::new(7);
@@ -253,17 +260,21 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let nurbs_weight: &Vec<f64> = &vec![1.0, 1.0, 1.0, 1.0];
+        let basis_function = BasisFunctions::new(2, knot_vector);
+        let bspline = &basis_function.b_spline_vector(&bs_mat, basis_fn_num);
+        let bspline_derive = basis_function.bspline_frst_deriv(&bs_mat, basis_fn_num);
 
-        let mut vec_correct_bspline_deriv = Vector::new(4);
-        vec_correct_bspline_deriv.set_value(0, -3.7222726232000003);
-        vec_correct_bspline_deriv.set_value(1, 3.5834089348000004);
-        vec_correct_bspline_deriv.set_value(2, 0.13886368839999996);
+        let mut vec_correct_bspline_deriv = Vector::new(basis_fn_num);
+        vec_correct_bspline_deriv.set_value(0, -3.722272623200001);
+        vec_correct_bspline_deriv.set_value(1, 3.5834089348000013);
+        vec_correct_bspline_deriv.set_value(2, 0.1388636884);
         vec_correct_bspline_deriv.set_value(3, 0.0);
 
-       // let nur_1_der = BSpline::weight_times_vector(nurbs_weight, &vec_correct_bspline_deriv);
+        //If weight values equals to 1, bsplines derivatives equals nurbs derivatives
+        let nurbs_weight: &Vec<f64> = &vec![1.0, 1.0, 1.0, 1.0];
+        let nurbs_fisrt_derive =  basis_function.nurbs_frst_deriv(nurbs_weight, bspline, &bspline_derive);
 
-      //  assert_eq!(1.1102230246251565e-16, nur_1_der);
+        assert_eq!(vec_correct_bspline_deriv, nurbs_fisrt_derive);
     }
 
     #[test]
@@ -286,7 +297,7 @@ mod tests {
         bs.set_value(2, 0.125);
         bs.set_value(3, 0.25);
 
-        let basis_fn = BSpline::new(polinomial_order, knot_vector);
+        let basis_fn = BasisFunctions::new(polinomial_order, knot_vector);
         let nurbs = basis_fn.nurbs_vector(nurbs_weight, &bs);
         let mut val = 0.0;
         for i in 0..nurbs.n_rows() {
@@ -314,7 +325,7 @@ mod tests {
         bs.set_value(2, 0.125);
         bs.set_value(3, 0.25);
 
-        let basis_fn = BSpline::new(polinomial_order, knot_vector);
+        let basis_fn = BasisFunctions::new(polinomial_order, knot_vector);
         let nurbs = basis_fn.nurbs_vector(nurbs_weight, &bs);
         let mut val = 0.0;
         for i in 0..nurbs.n_rows() {
@@ -343,7 +354,7 @@ mod tests {
         bs.set_value(2, 0.125);
         bs.set_value(3, 0.25);
 
-        let basis_fn = BSpline::new(polinomial_order, knot_vector);
+        let basis_fn = BasisFunctions::new(polinomial_order, knot_vector);
         let nurbs = basis_fn.nurbs_vector(nurbs_weight, &bs);
         let mut val = 0.0;
         for i in 0..nurbs.n_rows() {
@@ -372,7 +383,7 @@ mod tests {
         bs.set_value(2, 0.125);
         bs.set_value(3, 0.25);
 
-        let basis_fn = BSpline::new(polinomial_order, knot_vector);
+        let basis_fn = BasisFunctions::new(polinomial_order, knot_vector);
         let nurbs = basis_fn.nurbs_vector(nurbs_weight, &bs);
         let mut val = 0.0;
         for i in 0..nurbs.n_rows() {
@@ -393,7 +404,7 @@ mod tests {
 
         let polinomial_order = 2;
 
-        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let bs_matrix_calc = BasisFunctions::new(polinomial_order, knot_vector);
         let sub_region_num_calculated = bs_matrix_calc.calc_sub_region_num();
         assert_eq!(2, sub_region_num_calculated);
     }
@@ -415,7 +426,7 @@ mod tests {
 
         let polinomial_order = 3;
 
-        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let bs_matrix_calc = BasisFunctions::new(polinomial_order, knot_vector);
         let sub_region_num_calculated = bs_matrix_calc.calc_sub_region_num();
         assert_eq!(4, sub_region_num_calculated);
     }
@@ -441,7 +452,7 @@ mod tests {
 
         let polinomial_order = 4;
 
-        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let bs_matrix_calc = BasisFunctions::new(polinomial_order, knot_vector);
         let sub_region_num_calculated = bs_matrix_calc.calc_sub_region_num();
         assert_eq!(6, sub_region_num_calculated);
     }
@@ -468,7 +479,7 @@ mod tests {
         bs_mat_correct.set_value(2, 1, 0.06943184419999998);
         bs_mat_correct.set_value(2, 2, 0.0024103904945065356);
 
-        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let bs_matrix_calc = BasisFunctions::new(polinomial_order, knot_vector);
         let calc = bs_matrix_calc.b_spline_matrix(displacement);
 
         assert_eq!(bs_mat_correct, calc);
@@ -495,7 +506,7 @@ mod tests {
         bs_mat_correct.set_value(2, 1, 0.33000947820000004);
         bs_mat_correct.set_value(2, 2, 0.05445312785091815);
 
-        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let bs_matrix_calc = BasisFunctions::new(polinomial_order, knot_vector);
         let calc = bs_matrix_calc.b_spline_matrix(displacement);
         assert_eq!(bs_mat_correct, calc);
     }
@@ -522,7 +533,7 @@ mod tests {
         bs_mat_correct.set_value(3, 1, 0.6699905218);
         bs_mat_correct.set_value(3, 2, 0.44888729930183624);
 
-        let bs_matrix_calc = BSpline::new(polinomial_order, knot_vector);
+        let bs_matrix_calc = BasisFunctions::new(polinomial_order, knot_vector);
         let calc = bs_matrix_calc.b_spline_matrix(displacement);
         assert_eq!(bs_mat_correct, calc);
     }
@@ -553,7 +564,7 @@ mod tests {
         bs_vector_correct.set_value(2, 0.0024103904945065356);
 
         let bs_vec_calc: Vector =
-            BSpline::new(polinomial_order, knot_vector).b_spline_vector(&bs_mat_correct, 4);
+        BasisFunctions::new(polinomial_order, knot_vector).b_spline_vector(&bs_mat_correct, 4);
 
         assert_eq!(bs_vector_correct, bs_vec_calc);
     }
@@ -577,7 +588,7 @@ mod tests {
         subreg_matrix_correct.set_value(1, 0, 0.5);
         subreg_matrix_correct.set_value(1, 1, 1.0);
 
-        let subreg_cal = BSpline::new(polinomial_order, knot_vector).subreg_matrix(subregion_num);
+        let subreg_cal = BasisFunctions::new(polinomial_order, knot_vector).subreg_matrix(subregion_num);
         assert_eq!(subreg_matrix_correct, subreg_cal);
     }
 
@@ -601,7 +612,7 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let derive_bs_matrix_calc = BSpline::new(2, knot_vector);
+        let derive_bs_matrix_calc = BasisFunctions::new(2, knot_vector);
         let calc_val = derive_bs_matrix_calc.bspline_frst_deriv(&bs_mat, basis_fn_num);
 
         let mut vec_correct_bspline_deriv = Vector::new(4);
@@ -633,7 +644,7 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let derive_bs_matrix_calc = BSpline::new(2, knot_vector);
+        let derive_bs_matrix_calc = BasisFunctions::new(2, knot_vector);
         let calc_val = derive_bs_matrix_calc.bspline_frst_deriv(&bs_mat, basis_fn_num);
 
         let mut vec_correct_bspline_deriv = Vector::new(4);
@@ -665,7 +676,7 @@ mod tests {
         knot_vector.set_value(5, 1.0);
         knot_vector.set_value(6, 1.0);
 
-        let derive_bs_matrix_calc = BSpline::new(2, knot_vector);
+        let derive_bs_matrix_calc = BasisFunctions::new(2, knot_vector);
         let calc_val = derive_bs_matrix_calc.bspline_secnd_deriv(&bs_mat, basis_fn_num);
 
         let mut vec_correct_bspline_deriv = Vector::new(4);
