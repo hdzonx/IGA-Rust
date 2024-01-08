@@ -1,7 +1,7 @@
-struct Util {}
+pub struct Util {}
 
 impl Util {
-    pub fn newton_binomial(num: u128, den: u128) -> u128 {
+    pub fn newton_binomial(num: u64, den: u64) -> u64 {
         if den > num {
             panic!(" num must be greater or equal den")
         }
@@ -12,7 +12,7 @@ impl Util {
         binomial
     }
 
-    fn factorial(num: u128) -> u128 {
+    fn factorial(num: u64) -> u64 {
         let mut val = 1;
         if num != 0 {
             val = num;

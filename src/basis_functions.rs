@@ -1,4 +1,7 @@
+use std::thread::panicking;
+
 use crate::matrix::Matrix;
+use crate::util::{self, Util};
 use crate::vector::Vector;
 pub struct BasisFunctions {
     polinomial_order: usize,
@@ -200,14 +203,14 @@ impl BasisFunctions {
         }
         nurbs_vector
     }
-    fn weight_times_vector(&self, weight: &Vec<f64>, vector: &Vector) -> f64 {
+    fn weight_dot_vector(&self, weight: &Vec<f64>, vector: &Vector) -> f64 {
         let mut val = 0.0;
         for i in 0..weight.len() {
             val += weight[i] * vector.get_value(i);
         }
         val
     }
-
+    //first derivative for NURBS basis functions
     fn nurbs_frst_deriv(
         &self,
         nurbs_weight: &Vec<f64>,
@@ -217,13 +220,53 @@ impl BasisFunctions {
         let mut nurbs_ft_deriv = Vector::new(nurbs_weight.len());
 
         for i in 0..nurbs_weight.len() {
-            let w = self.weight_times_vector(nurbs_weight, bspline);
-            let w_deriv = self.weight_times_vector(nurbs_weight, bspline_frst_deriv);
+            let w = self.weight_dot_vector(nurbs_weight, bspline);
+            let w_deriv = self.weight_dot_vector(nurbs_weight, bspline_frst_deriv);
             let val = nurbs_weight[i]
                 * (w * bspline_frst_deriv.get_value(i) - w_deriv * bspline.get_value(i) / (w * w));
             nurbs_ft_deriv.set_value(i, val);
         }
         nurbs_ft_deriv
+    }
+    //second derivative for NURBS basis functions
+    fn nurbs_secnd_deriv(
+        &self,
+        weight_vector: Vec<f64>,
+        bspline: Vector,
+        bspline_frst_deriv: Vector,
+        bspline_sec_derive: Vector,
+        nurbs_vector: Vector,
+        nurbs_frst_deriv: Vector,
+    ) -> Vector {
+        let order = self.polinomial_order;
+        let mut nurbs_sec_deriv_vec = Vector::new(weight_vector.len());
+        let w = self.weight_dot_vector(&weight_vector, &bspline);
+        //The value 2 bellow is due the second derivative
+        for i in 0..2 {
+            let a_ik = weight_vector[i] * bspline_sec_derive.get_value(i);
+            let mut w_deriv: f64 = 0.0;
+            let mut nurbs_i: f64 = 0.0;
+            let mut binomial = 0;
+            let mut sum = 0.0;
+            for j in 0..order {
+                //The value 2 bellow is due the second derivative
+                binomial = Util::newton_binomial(2, j as u64);
+                if j == 0 {
+                    w_deriv = self.weight_dot_vector(&weight_vector, &bspline_frst_deriv);
+                    nurbs_i = nurbs_frst_deriv.get_value(i);
+                } else if j == 1 {
+                    w_deriv = self.weight_dot_vector(&weight_vector, &bspline_sec_derive);
+                    nurbs_i = nurbs_vector.get_value(i);
+                } else {
+                    panic!(" implementing error in second derivative for nurbs");
+                }
+                sum += (binomial as f64) * w_deriv * nurbs_i;
+            }
+
+            let val = (a_ik - sum) / w;
+            nurbs_sec_deriv_vec.set_value(i, val);
+        }
+        nurbs_sec_deriv_vec
     }
 }
 
@@ -272,7 +315,8 @@ mod tests {
 
         //If weight values equals to 1, bsplines derivatives equals nurbs derivatives
         let nurbs_weight: &Vec<f64> = &vec![1.0, 1.0, 1.0, 1.0];
-        let nurbs_fisrt_derive =  basis_function.nurbs_frst_deriv(nurbs_weight, bspline, &bspline_derive);
+        let nurbs_fisrt_derive =
+            basis_function.nurbs_frst_deriv(nurbs_weight, bspline, &bspline_derive);
 
         assert_eq!(vec_correct_bspline_deriv, nurbs_fisrt_derive);
     }
@@ -564,7 +608,7 @@ mod tests {
         bs_vector_correct.set_value(2, 0.0024103904945065356);
 
         let bs_vec_calc: Vector =
-        BasisFunctions::new(polinomial_order, knot_vector).b_spline_vector(&bs_mat_correct, 4);
+            BasisFunctions::new(polinomial_order, knot_vector).b_spline_vector(&bs_mat_correct, 4);
 
         assert_eq!(bs_vector_correct, bs_vec_calc);
     }
@@ -588,7 +632,8 @@ mod tests {
         subreg_matrix_correct.set_value(1, 0, 0.5);
         subreg_matrix_correct.set_value(1, 1, 1.0);
 
-        let subreg_cal = BasisFunctions::new(polinomial_order, knot_vector).subreg_matrix(subregion_num);
+        let subreg_cal =
+            BasisFunctions::new(polinomial_order, knot_vector).subreg_matrix(subregion_num);
         assert_eq!(subreg_matrix_correct, subreg_cal);
     }
 
