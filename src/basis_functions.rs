@@ -244,13 +244,14 @@ impl BasisFunctions {
         //The value 2 bellow is due the second derivative
         for i in 0..2 {
             let a_ik = weight_vector[i] * bspline_sec_derive.get_value(i);
-            let mut w_deriv: f64 = 0.0;
-            let mut nurbs_i: f64 = 0.0;
-            let mut binomial = 0;
+
             let mut sum = 0.0;
+
             for j in 0..order {
+                let w_deriv: f64;
+                let nurbs_i: f64;
                 //The value 2 bellow is due the second derivative
-                binomial = Util::newton_binomial(2, j as u64);
+                let binomial = Util::newton_binomial(2, j as u64);
                 if j == 0 {
                     w_deriv = self.weight_dot_vector(&weight_vector, &bspline_frst_deriv);
                     nurbs_i = nurbs_frst_deriv.get_value(i);
@@ -258,7 +259,7 @@ impl BasisFunctions {
                     w_deriv = self.weight_dot_vector(&weight_vector, &bspline_sec_derive);
                     nurbs_i = nurbs_vector.get_value(i);
                 } else {
-                    panic!(" implementing error in second derivative for nurbs");
+                    panic!(" Not implemented for derivative greater 2");
                 }
                 sum += (binomial as f64) * w_deriv * nurbs_i;
             }
