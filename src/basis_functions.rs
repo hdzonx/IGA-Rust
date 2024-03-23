@@ -725,12 +725,12 @@ mod tests {
         let derive_bs_matrix_calc = BasisFunctions::new(2, knot_vector);
         let calc_val = derive_bs_matrix_calc.bspline_secnd_deriv(&bs_mat, basis_fn_num);
 
-        let mut vec_correct_bspline_deriv = Vector::new(4);
-        vec_correct_bspline_deriv.set_value(0, 8.0);
-        vec_correct_bspline_deriv.set_value(1, -12.0);
-        vec_correct_bspline_deriv.set_value(2, 4.0);
-        vec_correct_bspline_deriv.set_value(3, 0.0);
+        let mut vec_correct_bspline_2deriv = Vector::new(4);
+        vec_correct_bspline_2deriv.set_value(0, 8.0);
+        vec_correct_bspline_2deriv.set_value(1, -12.0);
+        vec_correct_bspline_2deriv.set_value(2, 4.0);
+        vec_correct_bspline_2deriv.set_value(3, 0.0);
 
-        assert_eq!(vec_correct_bspline_deriv, calc_val);
+        assert_eq!(vec_correct_bspline_2deriv, calc_val);
     }
 }
