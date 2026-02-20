@@ -78,7 +78,7 @@ impl Matrix {
     }
 
     pub fn transpose(&self) -> Matrix {
-        let mut mat = Matrix::new(self.rows, self.cols);
+        let mut mat = Matrix::new(self.cols, self.rows);
 
         for i in 0..self.rows {
             for j in 0..self.cols {
@@ -96,9 +96,11 @@ impl Matrix {
         let mut mat = Matrix::new(self.rows, other.cols);
 
         for i in 0..self.rows {
-            for j in 0..self.cols {
+            for j in 0..other.cols {
                 let mut sum = 0.0;
                 for n in 0..self.cols {
+                    let a = self.value[i][n];
+                    let b = other.value[n][j];
                     sum += self.value[i][n] * other.value[n][j]
                 }
                 mat.value[i][j] = sum;
@@ -121,6 +123,16 @@ impl Matrix {
         }
         mat
     }
+
+    pub fn mult_scalar(&self, scalar: f64) -> Matrix {
+        let mut mat: Matrix = Matrix::new(self.rows, self.cols);
+        for i in 0..self.rows {
+            for j in 0..self.cols {
+                mat.value[i][j] = scalar * self.value[i][j];
+            }
+        }
+        mat
+    }
 }
 
 impl Debug for Matrix {
@@ -139,5 +151,95 @@ impl Debug for Matrix {
                 .collect::<Vec<String>>()
                 .join("\n")
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::matrix::Matrix;
+
+    #[test]
+    fn multiply_test() {
+        let mut b = Matrix::new(2, 5);
+        b.set_value(0, 0, 1.0);
+        b.set_value(0, 1, 2.0);
+        b.set_value(0, 2, 3.0);
+        b.set_value(0, 3, 4.0);
+        b.set_value(0, 4, 5.0);
+
+        b.set_value(1, 0, 6.0);
+        b.set_value(1, 1, 7.0);
+        b.set_value(1, 2, 8.0);
+        b.set_value(1, 3, 9.0);
+        b.set_value(1, 4, 10.0);
+
+        let mut d = Matrix::new(2, 2);
+        d.set_value(0, 0, 2.0);
+        d.set_value(0, 1, 6.0);
+
+        d.set_value(1, 0, 9.0);
+        d.set_value(1, 1, 7.0);
+
+        let db = d.multiply(&b);
+        println!("{:?}", db);
+
+        let tranpose_b = b.transpose();
+
+        let k = tranpose_b.multiply(&db);
+        println!("{:?}", k);
+    }
+
+    #[test]
+    fn multiply_01() {
+        let mut b_matrix = Matrix::new(3, 6);
+        //First line
+        b_matrix.set_value(0, 0, -1.5);
+        b_matrix.set_value(0, 1, 0.0);
+        b_matrix.set_value(0, 2, -3.5);
+        b_matrix.set_value(0, 3, 0.0);
+        b_matrix.set_value(0, 4, 5.0);
+        b_matrix.set_value(0, 5, 0.0);
+        //Second line
+        b_matrix.set_value(1, 0, 0.0);
+        b_matrix.set_value(1, 1, 5.5);
+        b_matrix.set_value(1, 2, 0.0);
+        b_matrix.set_value(1, 3, -3.0);
+        b_matrix.set_value(1, 4, 0.0);
+        b_matrix.set_value(1, 5, -2.5);
+        //Third line
+        b_matrix.set_value(2, 0, 5.5);
+        b_matrix.set_value(2, 1, -1.5);
+        b_matrix.set_value(2, 2, -3.0);
+        b_matrix.set_value(2, 3, 3.5);
+        b_matrix.set_value(2, 4, -2.5);
+        b_matrix.set_value(2, 5, 5.0);
+
+        let det_jacobian = 0.042105263;
+
+        let new_b = b_matrix.mult_scalar(det_jacobian);
+
+        // println!("{:?}", new_b);
+
+        let new_b_transpose = new_b.transpose();
+
+        // println!("{:?}", new_b_transpose);
+
+        let mut constitutive_matrix = Matrix::new(3, 3);
+        constitutive_matrix.set_value(0, 0, 220800.0);
+        constitutive_matrix.set_value(0, 1, 55200.0);
+        constitutive_matrix.set_value(0, 2, 0.0);
+        constitutive_matrix.set_value(1, 0, 55200.0);
+        constitutive_matrix.set_value(1, 1, 220800.0);
+        constitutive_matrix.set_value(1, 1, 0.0);
+        constitutive_matrix.set_value(2, 0, 0.0);
+        constitutive_matrix.set_value(2, 1, 0.0);
+        constitutive_matrix.set_value(2, 2, 82800.0);
+
+        let db_matrix = constitutive_matrix.multiply(&new_b);
+        // println!("{:?}", db_matrix);
+
+        let k_matrix = new_b_transpose.multiply(&db_matrix);
+        println!("{:?}", k_matrix);
     }
 }
