@@ -18,21 +18,21 @@ impl GaussRule {
         let dimension_problem = self.dimension_problem;
         let gauss_point_numbers = self.gauss_point_numbers;
 
-        if dimension_problem < 1 || dimension_problem > 3 {
+        if !(1..=3).contains(&dimension_problem) {
             panic!(" not implemented for this dimesion.");
         }
-        if gauss_point_numbers < 1 || gauss_point_numbers > 6 {
+        if !(1..=6).contains(&gauss_point_numbers) {
             panic!("not implmented for this number of Gauss integration points.")
         }
 
         let gauss = NumericalIntegration::values_gauss_rule(gauss_point_numbers);
 
         let vec_weight: Vec<_> = gauss.iter().map(|p| p.weigth.clone()).collect();
-        let weight = vec_weight.get(0).unwrap().to_vec();
+        let weight = vec_weight.first().unwrap().to_vec();
         self.weigth = weight;
 
         let vec_abscissas: Vec<_> = gauss.iter().map(|p| p.abscissas.clone()).collect();
-        let abscissas = vec_abscissas.get(0).unwrap().to_vec();
+        let abscissas = vec_abscissas.first().unwrap().to_vec();
         self.abscissas = abscissas;
     }
 

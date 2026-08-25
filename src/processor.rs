@@ -1,5 +1,4 @@
 use crate::basis_functions::BasisFunctions;
-use crate::matrix::Matrix;
 use crate::numerical_integration::GaussRule;
 use crate::vector::Vector;
 
@@ -36,7 +35,7 @@ impl Processor {
                 let bspline_matrix = basis_function.b_spline_matrix(displacement);
                 let bspline_vector =
                     basis_function.b_spline_vector(&bspline_matrix, control_points_num);
-                let nurbs = basis_function.nurbs_vector(&nurbs_weight, &bspline_vector);
+                let nurbs = basis_function.nurbs_vector(nurbs_weight, &bspline_vector);
                 println!("b_spline vector = {:?}", bspline_vector);
                 println!("nurbs vector = {:?}", nurbs);
 

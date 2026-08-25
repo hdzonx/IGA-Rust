@@ -8,8 +8,8 @@ impl Util {
         let k = Util::factorial(num);
         let j = Util::factorial(den);
         let z = num - den;
-        let binomial = k / (j * (Util::factorial(z)));
-        binomial
+        
+        k / (j * (Util::factorial(z)))
     }
 
     fn factorial(num: u64) -> u64 {

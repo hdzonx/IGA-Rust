@@ -1,7 +1,5 @@
-use std::thread::panicking;
-
 use crate::matrix::Matrix;
-use crate::util::{self, Util};
+use crate::util::Util;
 use crate::vector::Vector;
 pub struct BasisFunctions {
     polinomial_order: usize,
@@ -11,16 +9,16 @@ pub struct BasisFunctions {
 impl BasisFunctions {
     pub fn new(polinomial_order: usize, knot_vec: Vector) -> BasisFunctions {
         BasisFunctions {
-            polinomial_order: polinomial_order,
-            knot_vec: knot_vec,
+            polinomial_order,
+            knot_vec,
         }
     }
 
     fn basis_func_numbers(&self) -> usize {
         let kno_vec_len = self.knot_vec.n_rows();
         let polin_order = self.polinomial_order;
-        let n = kno_vec_len - polin_order - 1;
-        n
+
+        kno_vec_len - polin_order - 1
     }
     //Calculate the number of sub-Regions based on knot vector
     fn calc_sub_region_num(&self) -> u32 {

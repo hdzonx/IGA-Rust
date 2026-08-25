@@ -33,9 +33,9 @@ impl Vector {
         if self.rows != other.rows {
             panic!("add vector of different dimension is not possible")
         }
-        let mut new_vector = Vector::new(self.rows);
+        let new_vector = Vector::new(self.rows);
         for i in 0..self.rows {
-            self.value[i] = self.value[i] + other.value[i];
+            self.value[i] += other.value[i];
         }
         self
     }

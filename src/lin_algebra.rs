@@ -57,7 +57,7 @@ impl LinAlgebra {
         println!("L in lin_algerbra = {:?}", l_matrix);
         println!("U in lin_algerbra = {:?}", u_matrix);
 
-        let y_vector: Vector = LinAlgebra::foward_substitution(&l_matrix, &b_vector);
+        let y_vector: Vector = LinAlgebra::foward_substitution(&l_matrix, b_vector);
         let x_vector: Vector = LinAlgebra::back_substitution(&u_matrix, &y_vector);
         x_vector
     }
