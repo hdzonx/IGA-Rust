@@ -13,9 +13,8 @@ impl GaussRule {
             weigth: vec![0.0; gauss_point_numbers],
             abscissas: vec![0.0; gauss_point_numbers],
         }
-        
     }
-   pub fn gauss_rule(&mut self) {
+    pub fn gauss_rule(&mut self) {
         let dimension_problem = self.dimension_problem;
         let gauss_point_numbers = self.gauss_point_numbers;
 

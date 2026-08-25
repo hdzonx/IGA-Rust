@@ -14,7 +14,7 @@ impl Processor {
         knot_vector: Vector,
         beam_lenght: f64,
         load: f64,
-    ) ->Vector {
+    ) -> Vector {
         let gauss_abscissas = gauss.abscissas();
         let gauss_weight = gauss.weights();
         let gauss_point_numbers = gauss.abscissas().len();
@@ -23,7 +23,7 @@ impl Processor {
         let basis_function = BasisFunctions::new(polinomial_order, knot_vector);
 
         let subregion_matrix = basis_function.subreg_matrix(subregion_num); //subregion matrix has n rows and 2 columns
-        //let mut nurbs_vector = Vector::new(control_points_num);
+                                                                            //let mut nurbs_vector = Vector::new(control_points_num);
         let mut force_vector = Vector::new(control_points_num);
 
         for i in 0..subregion_num {
@@ -35,7 +35,7 @@ impl Processor {
                     + (1.0 + gauss_abscissas[j]) * subreg_final / 2.0;
                 let bspline_matrix = basis_function.b_spline_matrix(displacement);
                 let bspline_vector =
-                basis_function.b_spline_vector(&bspline_matrix, control_points_num);
+                    basis_function.b_spline_vector(&bspline_matrix, control_points_num);
                 let nurbs = basis_function.nurbs_vector(&nurbs_weight, &bspline_vector);
                 println!("b_spline vector = {:?}", bspline_vector);
                 println!("nurbs vector = {:?}", nurbs);
@@ -47,13 +47,11 @@ impl Processor {
 
                 force_vector.add_vector(d_force_vector);
             }
-    
         }
-        
+
         println!("force vector = {:?}", force_vector);
         force_vector
     }
-
 }
 
 #[cfg(test)]

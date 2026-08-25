@@ -136,21 +136,25 @@ impl Matrix {
 }
 
 impl Debug for Matrix {
-    fn fmt(&self, f: &mut Formatter) -> Result {
-        write!(
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        let result = write!(
             f,
             "Matrix {{\n{}\n}}",
-            (&self.value)
-                .into_iter()
-                .map(|row| "  ".to_string()
-                    + &row
-                        .into_iter()
-                        .map(|value| value.to_string())
-                        .collect::<Vec<String>>()
-                        .join(" "))
-                .collect::<Vec<String>>()
+            self.value
+                .iter()
+                .map(|row| {
+                    format!(
+                        "  {}",
+                        row.iter()
+                            .map(|value| value.to_string())
+                            .collect::<Vec<_>>()
+                            .join(" ")
+                    )
+                })
+                .collect::<Vec<_>>()
                 .join("\n")
-        )
+        );
+        result
     }
 }
 

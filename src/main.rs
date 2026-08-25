@@ -1,10 +1,10 @@
-pub mod matrix;
-pub mod vector;
-pub mod lin_algebra;
-pub mod numerical_integration;
 pub mod basis_functions;
+pub mod lin_algebra;
+pub mod matrix;
+pub mod numerical_integration;
 pub mod processor;
 pub mod util;
+pub mod vector;
 
 fn lu_decomposition_crout(
     matrix: &Vec<Vec<f64>>,
@@ -86,13 +86,10 @@ fn back_substitution(u_matrix: &Vec<Vec<f64>>, c_vector: &Vec<f64>) -> Vec<f64> 
 }
 
 fn main() {
-    
     let mut num = numerical_integration::GaussRule::new(1, 1);
     num.gauss_rule();
     let weight = num.weights();
     println!("Weight in main: {:?}", weight);
     let abscissas = num.abscissas();
     println!("Abscissas in main: {:?}", abscissas);
-
-
 }
